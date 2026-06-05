@@ -1,4 +1,4 @@
-import { ArrowLeft, WifiOff, Wifi, Compass, Sparkles, Search, HelpCircle } from 'lucide-react';
+import { ArrowLeft, WifiOff, Wifi, Compass, Sparkles, Search, HelpCircle, Settings } from 'lucide-react';
 
 interface HeaderProps {
   currentTab: string;
@@ -21,11 +21,13 @@ export default function Header({
       case 'learn':
         return 'Growth Essentials';
       case 'credentials':
-        return 'Career Cebu';
+        return 'Cebu Upskilling';
       case 'jobs':
-        return 'Career Cebu';
+        return 'Cebu Upskilling';
+      case 'settings':
+        return 'Settings';
       default:
-        return 'Career Cebu';
+        return 'Cebu Upskilling';
     }
   };
 
@@ -64,10 +66,18 @@ export default function Header({
             </span>
           </div>
         );
+      case 'settings':
+        return (
+          <div className="flex items-center gap-1">
+            <span id="settings-stamp" className="p-1 text-[#CCFF00] bg-[#CCFF00]/10 rounded border border-[#CCFF00]/20">
+              <Settings className="w-4 h-4 text-[#CCFF00]" />
+            </span>
+          </div>
+        );
       default:
         return (
           <div className="flex items-center gap-1.5" id="design-system-header-badge">
-            <span className="text-[10px] font-mono font-bold text-[#CCFF00] tracking-widest bg-white/5 px-2 py-0.5 border border-white/10 uppercase">SYS_ACTIVE</span>
+            <span className="text-[10px] font-sans font-bold text-[#CCFF00] tracking-widest bg-[#CCFF00]/10 px-2.5 py-0.5 border border-[#CCFF00]/25 rounded uppercase">Connected</span>
           </div>
         );
     }
@@ -90,9 +100,21 @@ export default function Header({
           ) : (
             <div className="w-2 h-2 rounded-full bg-[#CCFF00] animate-ping"></div>
           )}
-          <h1 id="header-brand-title" className="text-lg font-black tracking-wider text-white uppercase display-font">
-            {getHeaderTitle()}
-          </h1>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-1.5">
+              <h1 id="header-brand-title" className="text-[17px] font-black tracking-wider text-white uppercase display-font leading-none">
+                {getHeaderTitle()}
+              </h1>
+              {currentTab === 'home' && (
+                <span className="text-[8px] font-bold font-mono text-[#CCFF00] border border-[#CCFF00]/30 bg-[#CCFF00]/10 px-1 rounded">
+                  OFFICIAL
+                </span>
+              )}
+            </div>
+            <span className="text-[8px] font-mono tracking-widest text-white/50 uppercase block mt-0.5 font-bold leading-none">
+              Cebu City Gov • DMDP
+            </span>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           {getRightIcon()}
@@ -105,22 +127,22 @@ export default function Header({
         onClick={() => setIsOffline(!isOffline)}
         className={`w-full py-2 px-4 flex items-center justify-center gap-2 cursor-pointer transition-all duration-300 select-none text-center ${
           isOffline
-            ? 'bg-[#CCFF00] text-black font-extrabold uppercase tracking-widest text-[10px]'
-            : 'bg-white/5 text-white/70 font-mono tracking-wider text-[10px] border-b border-white/5'
+            ? 'bg-[#CCFF00] text-black font-bold uppercase tracking-widest text-[10px]'
+            : 'bg-white/5 text-white/70 font-sans tracking-wide text-[10px] border-b border-white/5'
         }`}
       >
         {isOffline ? (
           <>
-            <WifiOff className="w-3.5 h-3.5 shrink-0 text-black stroke-[3]" />
+            <WifiOff className="w-3.5 h-3.5 shrink-0 text-black stroke-[2]" />
             <span>
-              OFFLINE PROTOCOL ACTIVE • CHANGES WILL SYNC LATER
+              Offline Mode Active • Your progress is saved locally
             </span>
           </>
         ) : (
           <>
             <Wifi className="w-3.5 h-3.5 shrink-0 text-[#CCFF00] animate-pulse" />
             <span>
-              ONLINE SYS_SYNC ACTIVE • CEBU CLOUD CONNECTED
+              Connected • Your career guide is synchronized
             </span>
           </>
         )}

@@ -6,31 +6,32 @@ interface HomeTabProps {
   setCurrentTab: (tab: string) => void;
   isOffline: boolean;
   onSuccessToast: (msg: string) => void;
+  user: { name: string; skills: string[] } | null;
 }
 
-export default function HomeTab({ setCurrentTab, isOffline, onSuccessToast }: HomeTabProps) {
+export default function HomeTab({ setCurrentTab, isOffline, onSuccessToast, user }: HomeTabProps) {
   const [downloadProgress, setDownloadProgress] = useState<number | null>(null);
   const [downloaded, setDownloaded] = useState<boolean>(false);
   const [announcements, setAnnouncements] = useState<Announcement[]>([
     {
       id: 'ann-1',
-      source: 'DMDP Update',
+      source: 'DMDP Free Classes',
       timeAgo: '2 hours ago',
-      text: 'New IT-BPM Training Vouchers Available for displaced workers in IT Park.',
+      text: 'Free Customer Support & Communication classes now open at DMDP Cebu. No college degree required!',
       type: 'update',
     },
     {
       id: 'ann-2',
-      source: 'CIB.O Advisory',
+      source: 'Cebu City Job Fair',
       timeAgo: 'Yesterday',
-      text: 'Upcoming Virtual Job Fair focusing on mid-level tech roles. Registration opens next week.',
+      text: 'Mega Job Fair on June 15: Over 1,200 non-degree jobs for cashiers, service crew, office helpers, and call center staff.',
       type: 'advisory',
     },
     {
       id: 'ann-3',
-      source: 'Cebu City Gov',
+      source: 'Local Scholarships',
       timeAgo: '3 days ago',
-      text: 'Sponsorship grants approved for 250 new scholars in Mobile App Development program.',
+      text: 'Sponsorship entries approved for free vocational certificates in Housekeeping and Food Service.',
       type: 'update',
     },
   ]);
@@ -49,7 +50,7 @@ export default function HomeTab({ setCurrentTab, isOffline, onSuccessToast }: Ho
         if (prev >= 100) {
           clearInterval(interval);
           setDownloaded(true);
-          onSuccessToast('Next ServiceNow Micro-Module saved offline successfully!');
+          onSuccessToast('Next Customer Service Starter Module saved offline successfully!');
           return null;
         }
         return prev + 10;
@@ -59,19 +60,33 @@ export default function HomeTab({ setCurrentTab, isOffline, onSuccessToast }: Ho
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in pb-12 text-white">
+      {/* Welcome telemetry badge */}
+      {user && (
+        <div id="welcome-telemetry-badge" className="flex items-center justify-between border border-white/10 bg-white/5 p-4 rounded-lg font-mono">
+          <div>
+            <span className="text-[10px] text-white/55 uppercase block tracking-[0.15em] mb-0.5">Welcome back,</span>
+            <span className="text-white text-sm font-bold uppercase tracking-wider">{user.name}</span>
+          </div>
+          <div className="text-right">
+            <span className="text-[10px] text-white/55 uppercase block tracking-[0.15em] mb-0.5">My skills</span>
+            <span className="text-[#CCFF00] text-xs font-bold uppercase tracking-wider">{user.skills.length} Active</span>
+          </div>
+        </div>
+      )}
+
       {/* Active Track Card - Styled with Glass and border-white/10 */}
       <div id="active-track-card" className="glass rounded-lg border border-white/10 p-5 transition-all hover:border-white/15">
         <span className="text-[10px] font-bold tracking-[0.2em] text-[#CCFF00] block uppercase mb-1 font-mono">
-          // ACTIVE SYSTEM TRACK
+          Your Learning Path
         </span>
-        <h2 className="text-[20px] font-black text-white leading-snug uppercase tracking-tight mb-4 display-font">
-          Voice Agent to ServiceNow Developer
+        <h2 className="text-[20px] font-bold text-white leading-snug uppercase tracking-tight mb-4 display-font">
+          Customer Service & BPO Basics
         </h2>
 
         {/* ProgressBar of Kinetic design */}
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2 font-mono text-[12px] tracking-wider text-white/50">
-            <span>COURSE MODULE COMPLETED</span>
+            <span>COURSE PROGRESS</span>
             <span className="text-[#CCFF00] font-bold">{downloaded ? '70%' : '60%'}</span>
           </div>
           <div className="w-full bg-white/10 h-2.5 rounded-sm overflow-hidden">
@@ -87,7 +102,7 @@ export default function HomeTab({ setCurrentTab, isOffline, onSuccessToast }: Ho
           id="download-module-btn"
           onClick={handleDownload}
           disabled={downloadProgress !== null}
-          className={`w-full h-12 rounded flex items-center justify-center gap-2 px-4 font-black uppercase text-xs tracking-widest transition-all ${
+          className={`w-full h-12 rounded flex items-center justify-center gap-2 px-4 font-bold uppercase text-xs tracking-widest transition-all ${
             downloaded
               ? 'bg-white/5 text-white/60 border border-white/10 pointer-events-none'
               : 'bg-[#CCFF00] text-black hover:bg-[#b0db00] active:scale-98 cursor-pointer'
@@ -95,25 +110,25 @@ export default function HomeTab({ setCurrentTab, isOffline, onSuccessToast }: Ho
         >
           {downloadProgress !== null ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin text-black stroke-[3]" />
-              <span>DOWNLOADING LESSON ({downloadProgress}%)</span>
+              <Loader2 className="w-4 h-4 animate-spin text-black stroke-[2]" />
+              <span>Downloading lesson material ({downloadProgress}%)</span>
             </>
           ) : downloaded ? (
             <>
               <CheckCircle2 className="w-4 h-4 text-[#CCFF00] shrink-0" />
-              <span>MICRO-MODULE SYNCED OFFLINE</span>
+              <span>Saved offline! Ready to study anywhere</span>
             </>
           ) : (
             <>
-              <Download className="w-4 h-4 stroke-[3]" />
-              <span>DOWNLOAD NEXT MODULE (2.4 MB)</span>
+              <Download className="w-4 h-4 stroke-[2]" />
+              <span>Download next unit for offline learning (2.4 MB)</span>
             </>
           )}
         </button>
 
         {/* Info box with uppercase mono indicator */}
-        <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] text-white/45 font-mono uppercase tracking-widest">
-          <span>CURRICULUM SOURCE: DMDP X SERVICENOW</span>
+        <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] text-white/50 font-mono uppercase tracking-widest">
+          <span>★ DMDP Cebu Gov Official Certified Course ★</span>
         </div>
       </div>
 
@@ -129,7 +144,7 @@ export default function HomeTab({ setCurrentTab, isOffline, onSuccessToast }: Ho
           </div>
           <div>
             <h4 className="font-extrabold text-xs uppercase tracking-wider text-white font-mono">Resume Lesson</h4>
-            <span className="text-[11px] text-white/50 tracking-wide block mt-0.5">Practice Brandings</span>
+            <span className="text-[11px] text-white/60 tracking-wide block mt-0.5">Practice customer scenarios</span>
           </div>
         </button>
 
@@ -142,16 +157,16 @@ export default function HomeTab({ setCurrentTab, isOffline, onSuccessToast }: Ho
             <Briefcase className="w-4 h-4" />
           </div>
           <div>
-            <h4 className="font-extrabold text-xs uppercase tracking-wider text-white font-mono">Cebu Placements</h4>
-            <span className="text-[11px] text-[#CCFF00] tracking-wide block mt-0.5">4 Sync Matches</span>
+            <h4 className="font-extrabold text-xs uppercase tracking-wider text-white font-mono">Cebu Jobs</h4>
+            <span className="text-[11px] text-[#CCFF00] tracking-wide block mt-0.5">4 matches found!</span>
           </div>
         </button>
       </div>
 
       {/* Announcements */}
       <div className="mt-2">
-        <h3 id="announcements-section-header" className="text-sm font-black font-mono text-[#CCFF00] tracking-[0.25em] uppercase mb-2">
-          // LIVELIHOOD & INCUBATION REPORTS
+        <h3 id="announcements-section-header" className="text-sm font-bold font-mono text-[#CCFF00] tracking-[0.1em] uppercase mb-2">
+          News & Local Career Help
         </h3>
         <div className="w-full h-[1px] bg-white/10 mb-4"></div>
 
@@ -174,8 +189,8 @@ export default function HomeTab({ setCurrentTab, isOffline, onSuccessToast }: Ho
 
               {/* Text content */}
               <div className="flex flex-col gap-1">
-                <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest font-mono">
-                  {ann.source} // <span className="text-[#CCFF00]">{ann.timeAgo}</span>
+                <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest font-mono">
+                  {ann.source} • <span className="text-[#CCFF00]">{ann.timeAgo}</span>
                 </span>
                 <p className="text-[14px] font-medium text-white/85 leading-relaxed">
                   {ann.text}
@@ -191,11 +206,11 @@ export default function HomeTab({ setCurrentTab, isOffline, onSuccessToast }: Ho
         <div className="flex gap-3 items-start">
           <Sparkles className="w-5 h-5 text-[#CCFF00] shrink-0 mt-0.5" />
           <div>
-            <h4 className="font-black text-xs uppercase tracking-widest text-[#CCFF00] font-mono">Cebu System Alert</h4>
-            <p className="text-[13px] text-white/70 leading-relaxed mt-1 font-light">
+            <h4 className="font-bold text-xs uppercase tracking-widest text-[#CCFF00] font-mono">Official DMDP Care Advisory</h4>
+            <p className="text-[13px] text-white/80 leading-relaxed mt-1 font-light">
               {isOffline 
-                ? 'Your upskilling log is securely pocketed offline. Feel free to resume training, answer validation quizzes, or apply with your Digital Passport. Your metrics will hot-sync automatically on reconnection.' 
-                : 'CIB.O live networks are refreshed. Your credentials passport gives you direct prioritization for partner company roles.'
+                ? 'You are active on the offline network. Your certificates, job applications, and progress are stored safely on your device. Once you connect to the internet, Cebu Upskilling will securely synchronize your data with the official Cebu City Government registry.' 
+                : 'Welcome to your official civic portal. Complete skills modules to obtain verified certificates, register in the local workforce directory, and directly apply for zero-degree jobs across Cebu.'
               }
             </p>
           </div>
