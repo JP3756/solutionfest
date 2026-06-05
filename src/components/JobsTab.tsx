@@ -5,9 +5,10 @@ import { Job } from '../types';
 interface JobsTabProps {
   isOffline: boolean;
   onSuccessToast: (msg: string) => void;
+  userSkills?: string[];
 }
 
-export default function JobsTab({ isOffline, onSuccessToast }: JobsTabProps) {
+export default function JobsTab({ isOffline, onSuccessToast, userSkills = [] }: JobsTabProps) {
   // Filters state
   const [selectedCategory, setSelectedCategory] = useState<string>('All Industries');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -22,41 +23,39 @@ export default function JobsTab({ isOffline, onSuccessToast }: JobsTabProps) {
   const initialJobs: Job[] = [
     {
       id: 'job-1',
-      title: 'Data Privacy Officer',
-      location: 'Cebu IT Park',
-      salary: 'PHP 35k-45k',
-      description: 'Looking for a certified DPO to manage compliance frameworks within our BP...',
-      tags: ['Full-time', 'On-site', 'DPA 2012'],
-      matchesProfile: true,
+      title: 'Customer Support Associate (BPO)',
+      location: 'Cebu IT Park, Lahug',
+      salary: 'PHP 18,000 - 24,000',
+      description: 'Help answer questions from global clients via phone and live chat. No experience or college degree required — full paid training provided! High school graduate or senior high school graduate is welcome.',
+      tags: ['Customer Support', 'English Conversation', 'No Degree Required', 'Full-time'],
       category: 'Tech'
     },
     {
       id: 'job-2',
-      title: 'Warehouse Logistics Assistant',
+      title: 'Warehouse Logistics Helper',
       location: 'Mandaue Logistics Hub',
-      salary: 'PHP 18k-22k',
-      description: 'seeking organized individuals for inventory management and supply cha...',
-      tags: ['Contract', 'Shift Work'],
+      salary: 'PHP 14,000 - 17,000',
+      description: 'Assist in sorting, checking, and packing daily shop packages in our safe, modern warehouse. Requires good health and a warm team attitude. High school grads are welcome!',
+      tags: ['Basic Computer Skills', 'No Degree Required', 'Immediate Start', 'Shift Work'],
       category: 'Logistics'
     },
     {
       id: 'job-3',
-      title: 'Guest Services Manager',
+      title: 'Hotel Receptionist & Guest Associate',
       location: 'Lapu-Lapu Resort Strip',
-      salary: 'PHP 25k-30k',
-      description: 'Overseee guest satisfaction and front-of-house operations at a premium 5-star...',
-      tags: ['Full-time', 'On-site', 'Hospitality'],
+      salary: 'PHP 16,000 - 19,000',
+      description: 'Greet checking guests, register arrivals, and help with guest requests in a warm Cebuano tone. High school graduates with friendly communication confidence are highly encouraged to join us.',
+      tags: ['English Conversation', 'Polite Communication', 'No Degree Required', 'On-site'],
       closesSoon: true,
       category: 'Hospitality'
     },
     {
       id: 'job-4',
-      title: 'Retail Store Manager',
-      location: 'Banilad Retail Center',
-      salary: 'PHP 20k-25k',
-      description: 'Lead store operations for a global fashion brand. Responsible for...',
-      tags: ['Full-time', 'On-site', 'Retail Management'],
-      matchesProfile: true,
+      title: 'Retail Store Cashier & Assistant',
+      location: 'Banilad Commerce Center',
+      salary: 'PHP 13,000 - 15,000',
+      description: 'Scan item barcodes, process cashier transactions, and help organize display shelves. No college degree required. Full on-the-job training provided!',
+      tags: ['Retail Sales & Cashiering', 'No Degree Required', 'On-site', 'Full-time'],
       category: 'Retail'
     }
   ];
@@ -66,7 +65,7 @@ export default function JobsTab({ isOffline, onSuccessToast }: JobsTabProps) {
       onSuccessToast(`You have already applied for ${job.title}!`);
       return;
     }
-    // Launch Digital Passport Confirmation Modal
+    // Launch Apply Confirmation Modal
     setShowApplyModal(job);
   };
 
@@ -79,7 +78,7 @@ export default function JobsTab({ isOffline, onSuccessToast }: JobsTabProps) {
     if (isOffline) {
       onSuccessToast(`Saved Offline! Application for ${job.title} queued to sync when online.`);
     } else {
-      onSuccessToast(`Applied! Digital Skills Passport transmitted securely to the recruitment team.`);
+      onSuccessToast(`Applied! Your profile with registered skills was transmitted securely to the recruitment team.`);
     }
   };
 
@@ -129,7 +128,7 @@ export default function JobsTab({ isOffline, onSuccessToast }: JobsTabProps) {
         <input
           id="job-seach-input"
           type="text"
-          placeholder="Search jobs, areas or skills in Cebu..."
+          placeholder="Search jobs, locations, or skills..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full text-[13px] pl-10 pr-4 h-11 border border-white/10 rounded focus:border-[#CCFF00] focus:ring-1 focus:ring-[#CCFF00]/20 outline-none bg-[#0a0a0a] text-white font-mono uppercase tracking-wider"
@@ -151,6 +150,9 @@ export default function JobsTab({ isOffline, onSuccessToast }: JobsTabProps) {
           filteredJobs.map((job) => {
             const isApplied = appliedJobs.includes(job.id);
             const isSaved = savedJobs.includes(job.id);
+            const matchesActiveSkills = job.matchesProfile || 
+              job.tags.some((t) => userSkills.some((s) => s.toLowerCase() === t.toLowerCase())) || 
+              userSkills.some((s) => s.toLowerCase() === job.category.toLowerCase() || job.title.toLowerCase().includes(s.toLowerCase()));
 
             return (
               <div 
@@ -159,19 +161,19 @@ export default function JobsTab({ isOffline, onSuccessToast }: JobsTabProps) {
               >
                 {/* Accent Badges Header */}
                 <div className="flex flex-wrap items-center gap-2 justify-between">
-                  {job.matchesProfile ? (
+                  {matchesActiveSkills ? (
                     <span className="bg-[#CCFF00]/10 text-[#CCFF00] border border-[#CCFF00]/30 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded flex items-center gap-1 font-mono animate-pulse">
                       <Sparkles className="w-3.5 h-3.5" />
-                      SYSTEM MATCH PRIORITY
+                      BEST MATCH FOR YOU
                     </span>
                   ) : job.closesSoon ? (
                     <span className="bg-red-950/40 text-red-300 border border-red-900/30 text-[10px] uppercase font-bold px-2.5 py-1 rounded flex items-center gap-1 font-mono">
                       <Clock className="w-3.5 h-3.5" />
-                      CLOSES SOON
+                      Closing Soon
                     </span>
                   ) : (
-                    <span className="text-[10px] text-white/40 font-bold font-mono tracking-widest uppercase">
-                      // {job.category.toUpperCase()} SECTOR
+                    <span className="text-[10px] text-white/60 font-bold font-mono tracking-widest uppercase">
+                      {job.category} Job
                     </span>
                   )}
                 </div>
@@ -222,38 +224,38 @@ export default function JobsTab({ isOffline, onSuccessToast }: JobsTabProps) {
                     <div className="grid grid-cols-2 gap-3 mt-1.5">
                       <button
                         onClick={() => handleSaveToggle(job.id, job.title)}
-                        className={`h-[48px] rounded font-mono text-xs uppercase tracking-widest font-black border flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
+                        className={`h-[48px] rounded font-mono text-xs uppercase tracking-widest font-bold border flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
                           isSaved
                             ? 'bg-[#CCFF00]/10 text-[#CCFF00] border-[#CCFF00]/30'
                             : 'border-white/15 hover:bg-white/5 text-white/80'
                         }`}
                       >
                         <Bookmark className={`w-3.5 h-3.5 ${isSaved ? 'fill-current' : ''}`} />
-                        <span>{isSaved ? 'SAVED' : 'SAVE JOB'}</span>
+                        <span>{isSaved ? 'Saved' : 'Save Job'}</span>
                       </button>
 
                       <button
                         onClick={() => handleApplyClick(job)}
-                        className={`h-[48px] rounded font-mono text-xs uppercase tracking-widest font-black transition-all cursor-pointer ${
+                        className={`h-[48px] rounded font-mono text-xs uppercase tracking-widest font-bold transition-all cursor-pointer ${
                           isApplied
                             ? 'bg-white/5 text-[#CCFF00] border border-white/10'
                             : 'bg-[#CCFF00] text-black hover:bg-[#b0db00]'
                         }`}
                       >
-                        {isApplied ? 'APPLIED ✓' : 'PASS APPLY'}
+                        {isApplied ? 'Applied ✓' : 'Apply Now'}
                       </button>
                     </div>
                   ) : (
                     // Standard Single Button Action (from screenshot 4)
                     <button
                       onClick={() => handleApplyClick(job)}
-                      className={`w-full h-[48px] rounded font-mono text-xs uppercase tracking-widest font-black flex items-center justify-center gap-1.5 transition-all mt-1.5 cursor-pointer ${
+                      className={`w-full h-[48px] rounded font-mono text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-1.5 transition-all mt-1.5 cursor-pointer ${
                         isApplied
                           ? 'bg-white/5 text-[#CCFF00] border border-[#CCFF00]/30'
                           : 'bg-[#CCFF00] text-black hover:bg-[#b0db00]'
                       }`}
                     >
-                      <span>{isApplied ? 'APPLICATION SENT ✓' : 'APPLY WITH PASSPORT'}</span>
+                      <span>{isApplied ? 'Application Sent ✓' : 'Apply Now'}</span>
                       {!isApplied && <ArrowRight className="w-3.5 h-3.5" />}
                     </button>
                   )}
@@ -263,11 +265,11 @@ export default function JobsTab({ isOffline, onSuccessToast }: JobsTabProps) {
           })
         ) : (
           <div className="glass rounded-lg border border-white/10 p-8 text-center text-white/50">
-            <p className="font-extrabold uppercase tracking-widest font-mono text-sm text-white">No listings indexed</p>
-            <p className="text-xs text-white/40 mt-1 uppercase font-mono">Industry parameters returned zero records.</p>
+            <p className="font-bold uppercase tracking-wide font-sans text-sm text-white">No jobs found</p>
+            <p className="text-xs text-white/60 mt-1 font-sans">We couldn't find any jobs matching this search. Try a different category or other keywords!</p>
             <button 
               onClick={() => { setSelectedCategory('All Industries'); setSearchQuery(''); }}
-              className="mt-4 px-4 py-2 bg-white/5 text-[#CCFF00] border border-white/10 rounded font-mono text-xs uppercase tracking-widest hover:bg-white/10 transition-colors cursor-pointer"
+              className="mt-4 px-4 py-2 bg-white/5 text-[#CCFF00] border border-white/10 rounded font-mono text-xs uppercase tracking-widest hover:bg-white/10 transition-colors cursor-pointer font-bold"
             >
               Reset Filters
             </button>
@@ -284,21 +286,21 @@ export default function JobsTab({ isOffline, onSuccessToast }: JobsTabProps) {
                 <BadgeCheck className="w-5 h-5 text-[#CCFF00]" />
               </div>
               <div className="leading-tight font-mono">
-                <h3 className="font-black text-white text-xs uppercase tracking-widest">
-                  Secure Verify & Apply
+                <h3 className="font-bold text-white text-xs uppercase tracking-widest">
+                  Confirm Application
                 </h3>
-                <span className="text-[10px] text-white/50 uppercase tracking-widest">TALENT VERIFICATION BLOCK</span>
+                <span className="text-[10px] text-white/60 uppercase tracking-widest">Career Profile Attached</span>
               </div>
             </div>
 
             <div className="text-white/80 text-sm flex flex-col gap-2 leading-relaxed">
               <p className="text-[13px] font-sans">
-                You are about to direct-submit your validated resume elements to <span className="font-extrabold text-[#CCFF00]">{showApplyModal.title}</span>.
+                You're about to apply for <span className="font-extrabold text-[#CCFF00]">{showApplyModal.title}</span>!
               </p>
               <div className="bg-[#CCFF00]/5 border border-[#CCFF00]/25 rounded p-3 text-[11px] text-white flex items-start gap-2 pt-2.5">
-                <Check className="w-4 h-4 text-[#CCFF00] shrink-0 mt-0.5 stroke-[3]" />
-                <span className="font-mono uppercase tracking-wide leading-relaxed text-[10px]">
-                  Your verified **Skills Passport** (Communication, Problem Solving credentials index) is attached automatically to establish employer candidate priority.
+                <Check className="w-4 h-4 text-[#CCFF00] shrink-0 mt-0.5 stroke-[2]" />
+                <span className="font-sans uppercase tracking-wide leading-relaxed text-[10px] text-white/90">
+                  We have automatically attached your registered skills and certificates to help you stand out to the employer!
                 </span>
               </div>
             </div>
@@ -312,9 +314,9 @@ export default function JobsTab({ isOffline, onSuccessToast }: JobsTabProps) {
               </button>
               <button
                 onClick={confirmApply}
-                className="px-5 h-11 bg-[#CCFF00] hover:bg-[#b0db00 ] text-black rounded text-[11px] font-black uppercase tracking-wider font-mono cursor-pointer"
+                className="px-5 h-11 bg-[#CCFF00] hover:bg-[#b0db00] text-black rounded text-[11px] font-bold uppercase tracking-wider font-mono cursor-pointer"
               >
-                Transmit Profile
+                Send My Application
               </button>
             </div>
           </div>

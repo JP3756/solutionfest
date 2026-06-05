@@ -24,3 +24,28 @@ export interface Job {
   closesSoon?: boolean;
   category: 'Tech' | 'Logistics' | 'Hospitality' | 'Retail';
 }
+
+export interface WorkExperience {
+  id: string;
+  company: string;
+  role: string;
+  duration: string;
+  description: string;
+}
+
+export interface EducationEntry {
+  id: string;
+  school: string;
+  degree: string;
+  gradYear: string;
+}
+
+export interface ResumeData {
+  phone: string;
+  email: string;
+  location: string;
+  summary: string;
+  experiences: WorkExperience[];
+  educationList: EducationEntry[];
+  template: 'civic' | 'modern' | 'minimalist';
+}

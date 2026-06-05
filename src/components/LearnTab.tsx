@@ -63,10 +63,10 @@ export default function LearnTab({ isOffline, onSuccessToast }: LearnTabProps) {
     setChecked(true);
     if (selectedOption === 'option-b') {
       setIsCorrect(true);
-      onSuccessToast('Great job! That is the correct definition of a Personal Brand!');
+      onSuccessToast('Great job! That is the correct way to handle an upset customer!');
     } else {
       setIsCorrect(false);
-      onSuccessToast('Incorrect. Try option B for the best definition of a Personal Brand.');
+      onSuccessToast('Not quite. Listening calmly and apologizing politely is always the best way.');
     }
   };
 
@@ -74,9 +74,9 @@ export default function LearnTab({ isOffline, onSuccessToast }: LearnTabProps) {
     <div className="flex flex-col gap-5 animate-fade-in pb-12 text-white">
       {/* Module Progress Bar card */}
       <div className="glass rounded-lg border border-white/10 p-4">
-        <div className="flex justify-between items-center text-[10px] font-bold text-white/50 mb-2 uppercase tracking-widest font-mono">
-          <span>// STAGE 01: CORE ESSENTIALS</span>
-          <span className="text-[#CCFF00]">MOD_01_FOUNDATIONS</span>
+        <div className="flex justify-between items-center text-[10px] font-bold text-white/60 mb-2 uppercase tracking-widest font-mono">
+          <span>Stage 1: Core Essentials</span>
+          <span className="text-[#CCFF00]">Module 1: Foundations</span>
         </div>
         <div className="w-full bg-white/10 h-1.5 rounded-sm overflow-hidden">
           <div className="bg-[#CCFF00] h-full rounded-sm transition-all duration-300" style={{ width: '40%' }}></div>
@@ -101,9 +101,9 @@ export default function LearnTab({ isOffline, onSuccessToast }: LearnTabProps) {
           </button>
 
           <div className="flex flex-col">
-            <span className="font-extrabold text-[15px] uppercase tracking-wide font-mono text-white">Play Lesson Audio</span>
-            <span className="text-white/50 text-[11px] font-mono tracking-wider mt-1">
-              {isPlaying ? `TIM: ${audioTimer} / 02:45` : 'SIZE: 1.2 MB • LOW_BANDWIDTH'}
+            <span className="font-bold text-[15px] uppercase tracking-wide font-mono text-white">Listen to Lesson</span>
+            <span className="text-white/70 text-[11px] font-mono tracking-wider mt-1">
+              {isPlaying ? `Time: ${audioTimer} / 02:45` : 'Duration: 2:45 • Data-Saving Mode'}
             </span>
           </div>
         </div>
@@ -146,7 +146,7 @@ export default function LearnTab({ isOffline, onSuccessToast }: LearnTabProps) {
             className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors"
           >
             <span className="font-bold text-[16px] text-white tracking-tight uppercase font-mono">
-              What is Professional Branding?
+              Basics of Quality Customer Support
             </span>
             {brandingExpanded ? (
               <ChevronUp className="w-4 h-4 text-[#CCFF00]" />
@@ -158,7 +158,7 @@ export default function LearnTab({ isOffline, onSuccessToast }: LearnTabProps) {
           {brandingExpanded && (
             <div className="px-5 pb-5 border-t border-white/10 pt-4 flex flex-col gap-4 animate-slide-down">
               <p className="text-[15px] leading-[22px] text-white/80 font-sans">
-                Professional branding is the practice of marketing people and their careers as brands. It is an ongoing process of developing and maintaining a reputation and impression of an individual, group, or organization.
+                Great customer service is the absolute core of BPO, retail, and hospitality careers in Cebu. It is about listening carefully to people, being deeply polite, and finding simple, friendly ways to handle their questions or complaints.
               </p>
 
               {/* Diagram Placeholder - Brutalist technical diagram style */}
@@ -170,21 +170,21 @@ export default function LearnTab({ isOffline, onSuccessToast }: LearnTabProps) {
                 {/* SVG/HTML Diagram Representation */}
                 <div className="flex items-center gap-2 mb-1">
                   <div className="flex -space-x-1.5 font-mono">
-                    <div className="w-10 h-10 rounded-full border border-white/20 bg-black flex items-center justify-center text-[8px] font-black uppercase text-white">SKILL</div>
-                    <div className="w-10 h-10 rounded-full border border-[#CCFF00]/50 bg-[#CCFF00]/20 flex items-center justify-center text-[8px] font-black uppercase text-[#CCFF00]">VALUE</div>
-                    <div className="w-10 h-10 rounded-full border border-white/20 bg-black flex items-center justify-center text-[8px] font-black uppercase text-white">TRUST</div>
+                    <div className="w-10 h-10 rounded-full border border-white/20 bg-black flex items-center justify-center text-[7px] font-black uppercase text-white">LISTEN</div>
+                    <div className="w-10 h-10 rounded-full border border-[#CCFF00]/50 bg-[#CCFF00]/20 flex items-center justify-center text-[8px] font-black uppercase text-[#CCFF00]">POLITE</div>
+                    <div className="w-10 h-10 rounded-full border border-white/20 bg-black flex items-center justify-center text-[8px] font-black uppercase text-white">SOLVE</div>
                   </div>
                 </div>
                 
-                <span className="text-[12px] font-bold text-white/80 uppercase font-mono tracking-widest flex items-center gap-2">
+                <span className="text-[12px] font-bold text-white/90 uppercase font-mono tracking-widest flex items-center gap-2">
                   <span className="p-1 px-1.5 bg-[#CCFF00]/10 border border-[#CCFF00]/20 text-[#CCFF00] rounded">
-                    SYS_DIAG
+                    Diagram
                   </span>
-                  Personal Brand Design Architecture
+                  How Customer Trust is Built
                 </span>
                 
-                <p className="text-[11px] text-white/45 max-w-[280px] font-mono leading-relaxed">
-                  Visualizing core values, competencies, digital presence, and local networking circles.
+                <p className="text-[11px] text-white/60 max-w-[280px] font-sans leading-relaxed">
+                  Visualizing how careful listening, greeting with politeness, and active problem-solving gain a customer's trust and appreciation.
                 </p>
               </div>
             </div>
@@ -199,7 +199,7 @@ export default function LearnTab({ isOffline, onSuccessToast }: LearnTabProps) {
             className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors"
           >
             <span className="font-bold text-[16px] text-white tracking-tight uppercase font-mono">
-              Core Networking Terms
+              Key Habits for Workplace Success
             </span>
             {networkingExpanded ? (
               <ChevronUp className="w-4 h-4 text-[#CCFF00]" />
@@ -210,17 +210,17 @@ export default function LearnTab({ isOffline, onSuccessToast }: LearnTabProps) {
 
           {networkingExpanded && (
             <div className="px-5 pb-5 border-t border-white/10 pt-4 flex flex-col gap-4 animate-slide-down text-white/80">
-              <p className="text-[13px] font-mono tracking-wider text-white/50 uppercase">
-                Enhance your knowledge of professional engagement in the Philippine ecosystem:
+              <p className="text-[13px] font-sans text-white/70">
+                In local jobs, these two essential skills make you stand out:
               </p>
               <div className="grid gap-3">
                 <div className="p-3 bg-white/5 rounded border border-white/10">
-                  <span className="font-black text-xs text-[#CCFF00] block uppercase tracking-widest font-mono mb-1">// 1. Elevator Pitch</span>
-                  <span className="text-[13px] text-white/70">A short, 30-second summary of who you are, what you specialize in, and what career value you bring to Cebu's IT/BPM ecosystem.</span>
+                  <span className="font-bold text-xs text-[#CCFF00] block uppercase tracking-widest font-mono mb-1">1. Active Listening</span>
+                  <span className="text-[13px] text-white/80">Paying close attention to the customer, repeating their concerns back to them to show you understand, and taking brief notes if needed to avoid mistakes.</span>
                 </div>
                 <div className="p-3 bg-white/5 rounded border border-white/10">
-                  <span className="font-black text-xs text-[#CCFF00] block uppercase tracking-widest font-mono mb-1">// 2. Informational Interview</span>
-                  <span className="text-[13px] text-white/70 font-sans">A low-pressure conversation with an industry professional in Cebu IT Park to ask questions and learn insights about target job roles.</span>
+                  <span className="font-bold text-xs text-[#CCFF00] block uppercase tracking-widest font-mono mb-1">2. Communicating Cheerfully</span>
+                  <span className="text-[13px] text-white/80 font-sans">Using a warm tone, steady volume, and gentle words. In Cebuano culture, starting off with a warm &quot;Maayong adlaw!&quot; or nice &quot;Magandang umaga!&quot; establishes instant friendly trust.</span>
                 </div>
               </div>
             </div>
@@ -233,13 +233,13 @@ export default function LearnTab({ isOffline, onSuccessToast }: LearnTabProps) {
         {/* Title */}
         <div className="flex items-center gap-2 text-teal">
           <CheckSquare2 className="w-[18px] h-[18px] text-[#CCFF00]" />
-          <h3 className="font-black text-[15px] text-[#CCFF00] tracking-widest uppercase font-mono">
-            // KNOWLEDGE VALIDATION
+          <h3 className="font-bold text-[15px] text-[#CCFF00] tracking-wider uppercase font-mono">
+            Quick Pop Quiz
           </h3>
         </div>
 
         <p className="text-[16px] font-semibold text-white">
-          Which of these best defines a Personal Brand?
+          What is the best way to handle a frustrated or angry customer?
         </p>
 
         {/* Radio Options */}
@@ -265,7 +265,7 @@ export default function LearnTab({ isOffline, onSuccessToast }: LearnTabProps) {
               className="mr-1 accent-[#CCFF00]"
             />
             <span className="text-[14px] leading-snug">
-              A physical business card or printed resume.
+              Tell them it is not your fault and state company rules immediately.
             </span>
           </label>
 
@@ -290,7 +290,7 @@ export default function LearnTab({ isOffline, onSuccessToast }: LearnTabProps) {
               className="mr-1 accent-[#CCFF00]"
             />
             <span className="text-[14px] leading-snug">
-              The unique combination of skills, experience, and personality that you want the world to see.
+              Listen calmly while they speak, apologize politely for the trouble, and work out a simple, helpful solution.
             </span>
           </label>
 
@@ -315,7 +315,7 @@ export default function LearnTab({ isOffline, onSuccessToast }: LearnTabProps) {
               className="mr-1 accent-[#CCFF00]"
             />
             <span className="text-[14px] leading-snug">
-              A single post on a social media platform like LinkedIn.
+              Tell them to come back tomorrow or speak in louder words to show authority.
             </span>
           </label>
         </div>
@@ -333,16 +333,16 @@ export default function LearnTab({ isOffline, onSuccessToast }: LearnTabProps) {
         {checked && isCorrect !== null && (
           <div className={`p-3.5 rounded text-xs font-mono tracking-wide ${isCorrect ? 'bg-[#CCFF00]/15 text-[#CCFF00] border border-[#CCFF00]/30' : 'bg-red-950/40 text-red-300 border border-red-900/40'}`}>
             {isCorrect 
-              ? '// CORE VALIDATION VERIFIED. Profile priorities updated.' 
-              : '// VERIFICATION ERROR. Please reconsider Option B as the correct Personal Brand definition.'
+              ? 'Correct! Listening patiently and apologizing politely is the golden rule of customer support.' 
+              : 'Not quite! Re-read the habits under Basics of Quality Customer Support and try again.'
             }
           </div>
         )}
 
         {/* Soft Save Info at bottom */}
-        <div className="flex items-center justify-center gap-1.5 text-[10px] text-white/40 font-mono py-1 border-t border-white/10 uppercase tracking-widest mt-1">
+        <div className="flex items-center justify-center gap-1.5 text-[10px] text-white/50 font-mono py-1 border-t border-white/10 uppercase tracking-widest mt-1">
           <span className="w-1.5 h-1.5 rounded-full bg-[#CCFF00] animate-pulse"></span>
-          <span>Cached offline to active register.</span>
+          <span>Your progress is saved!</span>
         </div>
       </div>
     </div>

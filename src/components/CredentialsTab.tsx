@@ -1,168 +1,75 @@
 import { useState, FormEvent } from 'react';
-import { BadgeCheck, CheckCircle2, ShieldAlert, Award, FileText, X, AlertCircle } from 'lucide-react';
+import { BadgeCheck, CheckCircle2, ShieldAlert, Award, FileText, X, AlertCircle, Plus, Sparkles } from 'lucide-react';
 
 interface CredentialsTabProps {
   onSuccessToast: (msg: string) => void;
+  user: { name: string; skills: string[] } | null;
+  onUpdateSkills: (updatedSkills: string[]) => void;
+  onLogOut: () => void;
 }
 
-export default function CredentialsTab({ onSuccessToast }: CredentialsTabProps) {
-  // ISA details (Stateful to make it interactive!)
-  const [currentIncome, setCurrentIncome] = useState<number>(22000);
-  const [showIncomeModal, setShowIncomeModal] = useState<boolean>(false);
-  const [tempIncomeInput, setTempIncomeInput] = useState<string>('22000');
-
-  const threshold = 30000;
-  const isRepaymentSuspended = currentIncome < threshold;
-  const progressPercent = Math.min(100, Math.round((currentIncome / threshold) * 100));
-
-  const handleUpdateIncome = (e: FormEvent) => {
-    e.preventDefault();
-    const incomeNum = Number(tempIncomeInput);
-    if (isNaN(incomeNum) || incomeNum < 0) {
-      onSuccessToast('Please enter a valid positive number for monthly income.');
-      return;
-    }
-
-    setCurrentIncome(incomeNum);
-    setShowIncomeModal(false);
-
-    if (incomeNum >= threshold) {
-      const repaymentAmount = Math.round(incomeNum * 0.1);
-      onSuccessToast(`Income verified at ₱${incomeNum.toLocaleString()}. Repayment is now active (₱${repaymentAmount.toLocaleString()}/mo).`);
-    } else {
-      onSuccessToast(`Income verified at ₱${incomeNum.toLocaleString()}. Repayment remains suspended.`);
-    }
-  };
+export default function CredentialsTab({ onSuccessToast, user, onUpdateSkills, onLogOut }: CredentialsTabProps) {
+  // Skill setup
+  const [showEditSkillsModal, setShowEditSkillsModal] = useState<boolean>(false);
+  const [customSkillInput, setCustomSkillInput] = useState<string>('');
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in pb-12 text-white">
-      {/* Digital Skills Passport Card */}
-      <div className="glass rounded-lg border border-white/10 p-5 relative">
-        {/* Verified Badge Header Right Accent */}
-        <div id="passport-verified-icon" className="absolute top-5 right-5 w-9 h-9 rounded bg-[#CCFF00]/10 text-[#CCFF00] flex items-center justify-center border border-[#CCFF00]/30" title="Verified Skills Profile">
-          <BadgeCheck className="w-5 h-5 text-[#CCFF00]" />
+      {/* Registered Active Skills Matrix Card */}
+      <div id="skills-registry-matrix-card" className="glass rounded-lg border border-white/10 p-5 relative">
+        <div id="skills-profile-decor" className="absolute top-5 right-5 w-9 h-9 rounded bg-[#CCFF00]/5 text-[#CCFF00] flex items-center justify-center border border-[#CCFF00]/20" title="Active Skills Index">
+          <Sparkles className="w-4 h-4 text-[#CCFF00]" />
         </div>
 
-        <h2 id="passport-header-title" className="text-sm font-black font-mono text-[#CCFF00] tracking-[0.25em] uppercase mb-4 pr-10">
-          // DIGITAL SKILLS PASSPORT
+        <h2 className="text-sm font-bold font-mono text-[#CCFF00] tracking-[0.1em] uppercase mb-1">
+          Your Registered Skills
         </h2>
+        <span className="text-[10px] text-white/70 font-sans block uppercase mb-4">
+          Skills that match you with awesome local jobs
+        </span>
 
-        {/* Certificate items stream */}
-        <div className="flex flex-col gap-3">
-          {/* Item 1 */}
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4 flex gap-3.5 items-start">
-            <div className="w-5 h-5 rounded bg-[#CCFF00]/15 border border-[#CCFF00]/25 text-[#CCFF00] flex items-center justify-center shrink-0 mt-0.5">
-              <CheckCircle2 className="w-4.5 h-4.5 text-[#CCFF00]" />
-            </div>
-            <div>
-              <h4 className="font-bold text-[14px] uppercase tracking-wide font-mono text-white leading-snug">
-                Professional Communication Certificate
-              </h4>
-              <span className="text-white/45 text-[10px] font-mono block mt-1 uppercase tracking-widest">
-                VERIFIED INDEX: OCT 2023
+        {user && user.skills.length > 0 ? (
+          <div className="flex flex-wrap gap-2 mb-5">
+            {user.skills.map((skill) => (
+              <span 
+                key={skill}
+                className="bg-white/5 border border-white/10 text-white font-mono text-[11px] uppercase tracking-wider px-3 py-1.5 rounded flex items-center gap-2 font-bold"
+              >
+                {skill}
+                <button
+                  onClick={() => {
+                    const filtered = user.skills.filter((s) => s !== skill);
+                    onUpdateSkills(filtered);
+                  }}
+                  className="p-0.5 text-white/40 hover:text-white hover:bg-white/5 rounded cursor-pointer transition-colors"
+                  title={`Remove ${skill}`}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
               </span>
-            </div>
-          </div>
-
-          {/* Item 2 */}
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4 flex gap-3.5 items-start">
-            <div className="w-5 h-5 rounded bg-[#CCFF00]/15 border border-[#CCFF00]/25 text-[#CCFF00] flex items-center justify-center shrink-0 mt-0.5">
-              <CheckCircle2 className="w-4.5 h-4.5 text-[#CCFF00]" />
-            </div>
-            <div>
-              <h4 className="font-bold text-[14px] uppercase tracking-wide font-mono text-white leading-snug">
-                Strategic Problem Solving
-              </h4>
-              <span className="text-white/45 text-[10px] font-mono block mt-1 uppercase tracking-widest">
-                VERIFIED INDEX: JAN 2024
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Income Share Agreement (ISA) Tracker Card */}
-      <div id="isa-tracker-card" className="glass rounded-lg border border-white/10 p-5">
-        <h2 className="text-sm font-black font-mono text-[#CCFF00] tracking-[0.25em] uppercase mb-4">
-          // INCOME SHARE AGREEMENT (ISA)
-        </h2>
-
-        {/* Repayment Box */}
-        {isRepaymentSuspended ? (
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4 mb-5 flex gap-3 items-start">
-            <div className="w-6 h-6 rounded bg-white/10 text-white/70 border border-white/10 flex items-center justify-center shrink-0 mt-0.5">
-              <span className="font-mono text-xs font-bold">||</span>
-            </div>
-            <div>
-              <h3 className="font-bold text-white uppercase text-xs tracking-wider font-mono">
-                Repayment Suspended
-              </h3>
-              <p className="text-white/60 text-[13px] mt-0.5 leading-snug">
-                Current income verified below PHP 30,000 threshold. No dues generated.
-              </p>
-            </div>
+            ))}
           </div>
         ) : (
-          <div className="bg-[#CCFF00]/10 border border-[#CCFF00]/30 rounded-lg p-4 mb-5 flex gap-3 items-start">
-            <div className="w-6 h-6 rounded bg-[#CCFF00]/20 text-[#CCFF00] border border-[#CCFF00]/30 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs font-mono">
-              OK
-            </div>
-            <div>
-              <h3 className="font-black text-[#CCFF00] uppercase text-xs tracking-wider font-mono">
-                Repayment Active (10% contribution)
-              </h3>
-              <p className="text-[#CCFF00]/90 text-[13px] mt-0.5 leading-snug font-sans">
-                Current monthly contribution: <span className="font-bold font-mono">PHP {Math.round(currentIncome * 0.1).toLocaleString()}</span>
-              </p>
-            </div>
+          <div className="bg-white/5 border border-white/10 rounded p-4 text-center text-white/50 text-[11px] font-mono mb-5 uppercase tracking-wider">
+            No active skills listed yet. Add some to get started!
           </div>
         )}
 
-        {/* Metrics Display */}
-        <div className="mb-4">
-          <div className="flex justify-between items-end mb-2">
-            <div>
-              <span className="text-[10px] text-white/50 uppercase block font-bold font-mono tracking-widest">Current Income</span>
-              <span id="current-income-metric" className="text-white font-extrabold text-[16px] font-mono">
-                PHP {currentIncome.toLocaleString()}
-              </span>
-            </div>
-            <div className="text-right">
-              <span className="text-[10px] text-white/50 uppercase block font-bold font-mono tracking-widest">THRESHOLD BARRIER</span>
-              <span className="text-white font-extrabold text-[16px] font-mono">
-                PHP {threshold.toLocaleString()}
-              </span>
-            </div>
-          </div>
-
-          {/* Progress Bar represent current vs threshold */}
-          <div className="w-full bg-white/10 h-2.5 rounded overflow-hidden">
-            <div 
-              className={`h-full transition-all duration-500 ${
-                isRepaymentSuspended ? 'bg-white/40' : 'bg-[#CCFF00]'
-              }`} 
-              style={{ width: `${progressPercent}%` }}
-            ></div>
-          </div>
+        {/* Action button row to trigger editing modal or log out */}
+        <div className="flex gap-3 font-mono">
+          <button
+            onClick={() => setShowEditSkillsModal(true)}
+            className="flex-1 h-11 bg-[#CCFF00]/10 border border-[#CCFF00]/25 text-[#CCFF00] hover:bg-[#CCFF00]/20 text-xs font-bold uppercase tracking-widest rounded transition-colors cursor-pointer"
+          >
+            Add or Remove Skills
+          </button>
+          <button
+            onClick={onLogOut}
+            className="px-4 h-11 bg-red-950/25 hover:bg-red-950/35 border border-red-900/30 text-red-300 text-xs uppercase tracking-widest font-bold rounded transition-colors cursor-pointer"
+          >
+            Log Out
+          </button>
         </div>
-
-        {/* Verification cycle tag */}
-        <div className="flex justify-between items-center text-[11px] text-white/45 font-mono mb-4 uppercase tracking-wider">
-          <span>Next auditing cycle:</span>
-          <span className="font-bold text-[#CCFF00]">MARCH 2024</span>
-        </div>
-
-        {/* Update Button in Kinetic spec */}
-        <button
-          id="trigger-update-income-btn"
-          onClick={() => {
-            setTempIncomeInput(currentIncome.toString());
-            setShowIncomeModal(true);
-          }}
-          className="w-full h-12 bg-white/5 text-white hover:bg-white/15 border border-white/15 text-xs font-black uppercase tracking-widest rounded transition-colors cursor-pointer"
-        >
-          Update Income Details
-        </button>
       </div>
 
       {/* Professional Development Sponsorship */}
@@ -171,70 +78,145 @@ export default function CredentialsTab({ onSuccessToast }: CredentialsTabProps) 
           <Award className="w-5 h-5 text-[#CCFF00]" />
         </div>
         <div>
-          <h4 className="font-black text-xs uppercase tracking-wider font-mono text-white">
-            Professional Development Sponsorship
+          <h4 className="font-bold text-xs uppercase tracking-wider font-mono text-white">
+            Cebu Upskilling Government Sponsorship
           </h4>
-          <span className="text-[#CCFF00] text-[11px] font-mono uppercase tracking-widest block mt-0.5">
-            SPONSOR: CEBU GOV • CIB.O SEC_ACC
+          <span className="text-[#CCFF00] text-[11px] font-sans block mt-0.5">
+            Powering local talent with Cebu City gov-supported educational rewards
           </span>
         </div>
       </div>
 
-      {/* Interactive Modal to update income details - Sticking to raw dark modal specification of Kinetic design */}
-      {showIncomeModal && (
+      {/* Interactive Modal to configure user skills - Matches Kinetic Design specifications */}
+      {showEditSkillsModal && user && (
         <div className="fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-4 backdrop-blur-md animate-fade-in">
-          <div className="bg-[#0c0c0c] border border-white/15 max-w-sm w-full rounded-lg shadow-2xl p-6 flex flex-col gap-4 animate-scale-up text-white">
+          <div className="bg-[#0c0c0c] border border-white/15 max-w-sm w-full rounded-lg shadow-2xl p-6 flex flex-col gap-4 animate-scale-up text-white animate-fade-in">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <h3 className="font-black text-white text-[14px] uppercase tracking-widest font-mono">
-                Update Income Ledger
+              <h3 className="font-black text-white text-[13px] uppercase tracking-widest font-mono">
+                // SKILLS DIRECTORY INDEX
               </h3>
               <button 
-                onClick={() => setShowIncomeModal(false)}
-                className="p-1 rounded bg-white/5 text-white/50 hover:text-white transition-colors border border-white/10"
+                onClick={() => setShowEditSkillsModal(false)}
+                className="p-1 rounded bg-white/5 text-white/50 hover:text-white transition-colors border border-white/10 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleUpdateIncome} className="flex flex-col gap-4 mt-1">
+            <div className="flex flex-col gap-4 mt-1 font-mono">
+              {/* Type Custom Skill */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-white/60 text-[11px] uppercase tracking-widest font-bold font-mono">
-                  Monthly Verified Income (PHP)
+                <label className="text-white/60 text-[10px] uppercase tracking-widest font-bold">
+                  Add Custom Skill
                 </label>
-                <input
-                  type="number"
-                  placeholder="22000"
-                  value={tempIncomeInput}
-                  onChange={(e) => setTempIncomeInput(e.target.value)}
-                  className="w-full text-white bg-black font-extrabold text-[18px] font-mono h-12 px-3 border border-white/10 rounded focus:border-[#CCFF00] focus:ring-1 focus:ring-[#CCFF00]/20 outline-none"
-                  autoFocus
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="e.g. AWS Cloud, French Speaking"
+                    value={customSkillInput}
+                    onChange={(e) => setCustomSkillInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const trimmed = customSkillInput.trim();
+                        if (trimmed && !user.skills.includes(trimmed)) {
+                          onUpdateSkills([...user.skills, trimmed]);
+                        }
+                        setCustomSkillInput('');
+                      }
+                    }}
+                    className="flex-1 text-white bg-black font-semibold text-xs h-10 px-3 border border-white/10 rounded focus:border-[#CCFF00] focus:ring-1 focus:ring-[#CCFF00]/20 outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const trimmed = customSkillInput.trim();
+                      if (trimmed && !user.skills.includes(trimmed)) {
+                        onUpdateSkills([...user.skills, trimmed]);
+                      }
+                      setCustomSkillInput('');
+                    }}
+                    className="bg-[#CCFF00] hover:bg-[#b0db00] text-black px-3 rounded flex items-center justify-center cursor-pointer font-bold"
+                  >
+                    <Plus className="w-4 h-4 stroke-[3]" />
+                  </button>
+                </div>
               </div>
 
-              {/* Threshold warning notice within modal */}
-              <div className="bg-white/5 border border-white/10 rounded p-3 text-xs text-white/70 flex items-start gap-2.5">
-                <AlertCircle className="w-4 h-4 text-[#CCFF00] shrink-0 mt-0.5" />
-                <p className="font-mono text-[10px] uppercase tracking-wide leading-relaxed">
-                  Setting verified monthly income above PHP 30,000 will activate monthly contributions of 10%. Below threshold remains suspended.
-                </p>
+              {/* Suggestions matrix */}
+              <div className="flex flex-col gap-1.5">
+                <span className="text-white/50 text-[10px] uppercase tracking-widest font-bold">
+                  Suggested Skills
+                </span>
+                <div className="flex flex-wrap gap-1.5 max-h-[125px] overflow-y-auto pr-1">
+                  {[
+                    'Customer Support',
+                    'Polite Communication',
+                    'Basic Computer Skills',
+                    'English Conversation',
+                    'Retail Sales & Cashiering',
+                    'Data Typing & Entry',
+                    'Office Filing & Clerical',
+                    'Food Service & Crew Duties',
+                    'Hotel & Housekeeping Support'
+                  ].map(suggested => {
+                    const isSelected = user.skills.includes(suggested);
+                    return (
+                      <button
+                        key={suggested}
+                        type="button"
+                        onClick={() => {
+                          if (isSelected) {
+                            onUpdateSkills(user.skills.filter(s => s !== suggested));
+                          } else {
+                            onUpdateSkills([...user.skills, suggested]);
+                          }
+                        }}
+                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded transition-colors border cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#CCFF00]/15 text-[#CCFF00] border-[#CCFF00]/30'
+                            : 'bg-white/5 text-white/60 border-white/5 hover:bg-white/10'
+                        }`}
+                      >
+                        {suggested}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Mini tag summary representing current registry */}
+              <div className="bg-white/5 border border-white/10 rounded p-3 text-xs">
+                <span className="text-[9px] text-[#CCFF00] font-bold block mb-2 uppercase tracking-wider">// REGISTERED UNITS ({user.skills.length})</span>
+                {user.skills.length === 0 ? (
+                  <span className="text-[10px] text-white/30 block uppercase tracking-wider">No active units catalogued.</span>
+                ) : (
+                  <div className="flex flex-wrap gap-1 max-h-[100px] overflow-y-auto">
+                    {user.skills.map(s => (
+                      <span key={s} className="bg-black border border-white/10 text-white/80 px-2 py-0.5 rounded text-[10px] flex items-center gap-1">
+                        {s}
+                        <button
+                          onClick={() => onUpdateSkills(user.skills.filter(it => it !== s))}
+                          className="hover:text-red-400 font-bold p-0.5"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-3 justify-end mt-2">
                 <button
                   type="button"
-                  onClick={() => setShowIncomeModal(false)}
-                  className="px-4 h-11 border border-white/10 rounded text-[11px] font-bold text-white uppercase tracking-wider font-mono hover:bg-white/5"
+                  onClick={() => setShowEditSkillsModal(false)}
+                  className="px-5 h-11 bg-[#CCFF00] hover:bg-[#b0db00] text-black rounded text-[11px] font-black uppercase tracking-wider cursor-pointer"
                 >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 h-11 bg-[#CCFF00] hover:bg-[#b0db00] text-black rounded text-[11px] font-black uppercase tracking-wider font-mono"
-                >
-                  Confirm Audited State
+                  Conclude Editing
                 </button>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       )}
