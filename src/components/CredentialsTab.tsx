@@ -79,10 +79,10 @@ export default function CredentialsTab({ onSuccessToast, user, onUpdateSkills, o
         </div>
         <div>
           <h4 className="font-bold text-xs uppercase tracking-wider font-mono text-white">
-            Cebu Upskilling Government Sponsorship
+            Cebu Training & DMDP Alignment Guide
           </h4>
           <span className="text-[#CCFF00] text-[11px] font-sans block mt-0.5">
-            Powering local talent with Cebu City gov-supported educational rewards
+            Verified standard alignments preparing you for career-certified training roles
           </span>
         </div>
       </div>
@@ -112,7 +112,7 @@ export default function CredentialsTab({ onSuccessToast, user, onUpdateSkills, o
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="e.g. AWS Cloud, French Speaking"
+                    placeholder=""
                     value={customSkillInput}
                     onChange={(e) => setCustomSkillInput(e.target.value)}
                     onKeyDown={(e) => {

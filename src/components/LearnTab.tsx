@@ -1,5 +1,55 @@
 import { useState, useEffect } from 'react';
-import { Play, Pause, ChevronUp, ChevronDown, CheckSquare2, Download, Check, Volume2, CloudLightning } from 'lucide-react';
+import { 
+  Play, 
+  Pause, 
+  ChevronUp, 
+  ChevronDown, 
+  CheckSquare2, 
+  Download, 
+  Check, 
+  Volume2, 
+  CloudLightning, 
+  Mic, 
+  MicOff, 
+  Sparkles, 
+  RefreshCw, 
+  Sliders, 
+  Award, 
+  ThumbsUp,
+  CheckCircle2
+} from 'lucide-react';
+import mentorCebu from '../assets/images/mentor_cebu_1781173991843.png';
+import cebuanasMentor from '../assets/images/cebuanas_office_mentors_1781174586933.png';
+
+const VOICE_SCENARIOS = [
+  {
+    id: 'scen-1',
+    title: 'Lahug BPO Escalation',
+    context: 'Angry Billing Customer',
+    prompt: '"I was charged twice for my subscription last night, this is completely unacceptable!"',
+    hint: 'Acknowledge immediately, apologize politely, and offer a quick trace on the billing ID.',
+    bestPractice: '"I sincerely apologize for the double billing error, Sir. Let me look into this immediately and resolve it for you."',
+    proTip: 'Avoid flat Cebuano "e/i" vowels. Keep the "sincerely" pronunciation rounded and warm.',
+  },
+  {
+    id: 'scen-2',
+    title: 'Mactan Resort Check-in',
+    context: 'Exhausted Guest Arrival',
+    prompt: '"We had a 4-hour delay in Manila, is our room ready yet? We are exhausted."',
+    hint: 'Give a warm cordial welcome, show empathy, and speed up their check-in process.',
+    bestPractice: '"Maayong adlaw! Welcome to Cebu, Ma’am. I understand you had a long journey, let me activate your keys right away."',
+    proTip: 'Smile while speaking. A smiling face naturally creates a friendly, highly polite vocal frequency.',
+  },
+  {
+    id: 'scen-3',
+    title: 'Mandaue Logistics Trace',
+    context: 'Upset Delivery Client',
+    prompt: '"My priority package says delivered, but it is not in my office! Where is it?"',
+    hint: 'Acknowledge the stress, stay calm, and ask for the express dispatch parcel tracking number.',
+    bestPractice: '"I understand the urgency and regret the confusion, Sir. Let me double check the GPS dispatch coordinate right now."',
+    proTip: 'Pronounce consonants clearly. Make sure the ending sounds of "urgency" and "dispatch" are sharp.',
+  }
+];
 
 interface LearnTabProps {
   isOffline: boolean;
@@ -20,6 +70,48 @@ export default function LearnTab({ isOffline, onSuccessToast }: LearnTabProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [checked, setChecked] = useState<boolean>(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+
+  // Voice Coach Simulator State
+  const [activeScenario, setActiveScenario] = useState<number>(0);
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [recordingSeconds, setRecordingSeconds] = useState<number>(0);
+  const [voiceEvaluation, setVoiceEvaluation] = useState<{
+    politenessScore: number;
+    clarityScore: number;
+    pacing: string;
+    tips: string[];
+  } | null>(null);
+
+  // Simple simulator timer for voice recording
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isRecording) {
+      setRecordingSeconds(0);
+      interval = setInterval(() => {
+        setRecordingSeconds(prev => {
+          if (prev >= 3) {
+            clearInterval(interval);
+            setIsRecording(false);
+            // Generate evaluation scores
+            setVoiceEvaluation({
+              politenessScore: 88 + Math.floor(Math.random() * 12),
+              clarityScore: 85 + Math.floor(Math.random() * 15),
+              pacing: 'Conversational • 135 WPM',
+              tips: [
+                'Excellent use of polite pronouns ("Sir" / "Ma’am").',
+                'Your speed is steady and easy for foreign callers to understand.',
+                'Work on softening your "T" plosives in words like "can’t" or "billing" to sound friendlier.'
+              ]
+            });
+            onSuccessToast('Speech analyzed successfully! Review your voice quality score below.');
+            return 3;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isRecording]);
 
   // Audio simulator
   useEffect(() => {
@@ -136,6 +228,33 @@ export default function LearnTab({ isOffline, onSuccessToast }: LearnTabProps) {
         </div>
       )}
 
+      {/* Visual BPO Coaching Mentor Board */}
+      <div id="bpo-coaching-board" className="glass rounded-lg border border-white/10 p-4 flex gap-4 items-center">
+        <img 
+          src={cebuanasMentor} 
+          alt="Featured Speaker - Coach Maricel" 
+          className="w-16 h-16 rounded-lg object-cover border border-white/15 shrink-0"
+          referrerPolicy="no-referrer"
+        />
+        <div className="flex flex-col">
+          <span className="text-[9px] font-mono font-bold text-[#CCFF00] uppercase tracking-widest block">
+            Featured Speaker for Today
+          </span>
+          <h4 className="text-sm font-black text-white uppercase mt-0.5">Coach Maricel Ramos</h4>
+          <p className="text-[11px] text-white/70 mt-1 leading-snug font-sans">
+            &ldquo;As your key speaker today, I want to help you conquer every voice accent obstacle and secure a great career in Cebu! Connect with me to get direct mentorship, feedback, or simple help styling your pitch.&rdquo;
+          </p>
+          <div className="flex gap-2 mt-2">
+            <button 
+              onClick={() => onSuccessToast('Connecting you with today\'s speaker, Coach Maricel Ramos, for live career support and pronunciation feedback!')}
+              className="px-2.5 py-1 rounded bg-[#CCFF00]/10 border border-[#CCFF00]/30 hover:bg-[#CCFF00]/20 text-[#CCFF00] font-mono text-[9px] font-bold uppercase transition-colors text-left"
+            >
+              Connect with Today's Speaker
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Accordions */}
       <div className="flex flex-col gap-3">
         {/* Accordion Item 1: What is Professional Branding? */}
@@ -226,6 +345,185 @@ export default function LearnTab({ isOffline, onSuccessToast }: LearnTabProps) {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Interactive Cebuano BPO Voice Lab & Audio Coach */}
+      <div id="bpo-voice-lab-card" className="glass rounded-lg border border-white/10 p-5 flex flex-col gap-4 relative">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-white/5 pb-3">
+          <div className="flex flex-col">
+            <h3 className="text-sm font-bold font-mono text-[#CCFF00] tracking-[0.1em] uppercase flex items-center gap-2">
+              <Mic className="w-4 h-4 text-[#CCFF00]" />
+              Cebu BPO Speech & Voice Lab
+            </h3>
+            <span className="text-[10px] text-white/55 font-mono uppercase tracking-wider block mt-1">
+              Offline-Ready Speech Pattern Simulator
+            </span>
+          </div>
+          <div className="self-start sm:self-center bg-[#CCFF00]/10 text-[#CCFF00] border border-[#CCFF00]/20 px-2 py-0.5 rounded text-[9px] font-bold font-mono tracking-wider uppercase flex items-center gap-1 shrink-0 animate-pulse">
+            <Sparkles className="w-3 h-3 text-[#CCFF00]" />
+            <span>Active Trainer</span>
+          </div>
+        </div>
+
+        {/* Scenario Select Buttons */}
+        <div className="grid grid-cols-3 gap-2 border-y border-white/5 py-2.5 my-0.5 scrollbar-none overflow-x-auto text-left font-mono">
+          {VOICE_SCENARIOS.map((sc, index) => (
+            <button
+              key={sc.id}
+              type="button"
+              onClick={() => {
+                setActiveScenario(index);
+                setVoiceEvaluation(null);
+                setIsRecording(false);
+              }}
+              className={`text-[9.5px] px-2 py-3 rounded border leading-tight transition-all font-bold uppercase cursor-pointer flex flex-col justify-between min-h-[58px] ${
+                activeScenario === index
+                  ? 'bg-[#CCFF00]/10 border-[#CCFF00] text-[#CCFF00]'
+                  : 'bg-white/5 border-white/5 text-white/60 hover:bg-white/10 hover:border-white/10'
+              }`}
+            >
+              <span className="opacity-50 text-[7px] tracking-widest">{sc.context}</span>
+              <span className="mt-1.5 truncate max-w-full block">{sc.title}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Prompts Pane */}
+        <div className="bg-black/30 border border-white/5 p-4 rounded-lg text-left relative overflow-hidden">
+          <span className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest block mb-2 leading-none">
+            Customer Dialogue Cue:
+          </span>
+          <p className="text-xs italic text-white/95 font-medium leading-relaxed font-sans mb-3 pl-3 border-l bg-gradient-to-r from-white/5 to-transparent py-1.5 rounded-r border-[#CCFF00]">
+            {VOICE_SCENARIOS[activeScenario].prompt}
+          </p>
+
+          <span className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest block mb-2 leading-none">
+            Your Training Line:
+          </span>
+          <p className="text-[12px] text-[#CCFF00] font-bold leading-relaxed font-mono bg-white/5 rounded p-3 border border-white/5">
+            {VOICE_SCENARIOS[activeScenario].bestPractice}
+          </p>
+          
+          <div className="mt-2.5 flex items-start gap-1.5 p-2 bg-[#CCFF00]/5 border border-[#CCFF00]/10 rounded text-[10px] text-white/70">
+            <Sliders className="w-3.5 h-3.5 text-[#CCFF00] shrink-0 mt-0.5" />
+            <p className="font-sans leading-snug">
+              <strong className="text-white">Coach Tip:</strong> {VOICE_SCENARIOS[activeScenario].hint}
+            </p>
+          </div>
+        </div>
+
+        {/* Audio Recording Controller with wave effect simulation */}
+        <div className="flex flex-col gap-3 items-center text-center justify-center py-1 relative">
+          {/* Waveform Visualization area */}
+          <div className="w-full h-12 flex items-center justify-center bg-black/40 border border-white/10 rounded-lg relative overflow-hidden">
+            {isRecording ? (
+              <div className="absolute inset-x-0 inset-y-0 flex items-center justify-center gap-1 px-4">
+                {[...Array(24)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="w-1.5 bg-[#CCFF00] rounded-full transition-all duration-100"
+                    style={{
+                      height: `${15 + Math.sin(recordingSeconds * 5 + i) * 20 + Math.random() * 30}%`,
+                      opacity: 0.4 + Math.random() * 0.6
+                    }}
+                  ></div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-[10px] font-mono text-white/30 uppercase tracking-widest flex items-center gap-2 select-none">
+                <Volume2 className="w-4 h-4 opacity-50" />
+                <span>Microphone Standby • Click speak to record</span>
+              </div>
+            )}
+            
+            {isRecording && (
+              <div className="absolute top-2 right-3 flex items-center gap-1.5 font-mono text-[9px] text-[#CCFF00] tracking-widest font-black uppercase">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                <span>REC 0:0{recordingSeconds}s</span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex gap-3 w-full">
+            <button
+              onClick={() => {
+                setVoiceEvaluation(null);
+                setIsRecording(true);
+              }}
+              disabled={isRecording}
+              className={`flex-1 h-12 rounded flex items-center justify-center gap-2 font-mono text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+                isRecording
+                  ? 'bg-red-950/45 text-red-300 border border-red-900/30'
+                  : 'bg-[#CCFF00] text-black hover:bg-[#b0db00] active:scale-[0.98]'
+              }`}
+            >
+              <Mic className="w-4 h-4 stroke-[2]" />
+              <span>{isRecording ? `Recording... 0:0${recordingSeconds}s` : 'Speak Line & Record'}</span>
+            </button>
+
+            {voiceEvaluation && (
+              <button
+                onClick={() => {
+                  setVoiceEvaluation(null);
+                }}
+                className="px-4 border border-white/15 bg-white/5 hover:bg-white/10 hover:text-white text-white/70 rounded flex items-center justify-center cursor-pointer transition-colors"
+                title="Reset simulation"
+              >
+                <RefreshCw className="w-4 h-4 animate-spin-once" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Voice Quality Assessment Evaluation Panel */}
+        {voiceEvaluation && (
+          <div className="bg-[#CCFF00]/5 border border-[#CCFF00]/25 rounded-lg p-4 animate-fade-in text-left">
+            <div className="flex items-center gap-2 border-b border-white/5 pb-2.5 mb-3 justify-between">
+              <div className="flex items-center gap-1.5 font-mono">
+                <Award className="w-4 h-4 text-[#CCFF00]" />
+                <h4 className="font-bold text-xs uppercase tracking-widest text-[#CCFF00]">
+                  BPO Speech Evaluation
+                </h4>
+              </div>
+              <span className="text-[9px] font-mono text-white/55 uppercase tracking-widest font-extrabold bg-[#CCFF00]/10 px-1.5 py-0.5 rounded border border-[#CCFF00]/15 leading-none">
+                Grade: {voiceEvaluation.politenessScore >= 94 ? 'EXCELLENT A+' : 'PASS A-'}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3 text-center mb-4 font-mono">
+              <div className="bg-black/30 p-2 border border-white/5 rounded">
+                <span className="text-[8px] text-white/40 block pb-1 uppercase tracking-widest leading-none">Politeness</span>
+                <span className="text-15px sm:text-base font-black text-[#CCFF00]">{voiceEvaluation.politenessScore}%</span>
+              </div>
+              <div className="bg-black/30 p-2 border border-white/5 rounded">
+                <span className="text-[8px] text-white/40 block pb-1 uppercase tracking-widest leading-none">Clarity</span>
+                <span className="text-15px sm:text-base font-black text-white">{voiceEvaluation.clarityScore}%</span>
+              </div>
+              <div className="bg-black/30 p-2 border border-white/5 rounded">
+                <span className="text-[8px] text-white/40 block pb-1 uppercase tracking-widest leading-none">Pacing</span>
+                <span className="text-[8.5px] font-black text-[#CCFF00] uppercase tracking-tighter leading-none mt-1 select-none block">Conversational</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[8.5px] font-mono uppercase tracking-widest text-white/40 block font-bold leading-none mb-1">
+                Voice Quality Feedback & Pro Tips:
+              </span>
+              <ul className="flex flex-col gap-2 pl-1 leading-relaxed">
+                {voiceEvaluation.tips.map((tip, i) => (
+                  <li key={i} className="text-[11.5px] text-white/80 flex items-start gap-2">
+                    <span className="text-[#CCFF00] shrink-0 mt-0.5">✦</span>
+                    <span className="font-sans leading-tight">{tip}</span>
+                  </li>
+                ))}
+                <li className="text-[10px] text-[#CCFF00]/85 font-mono uppercase bg-[#CCFF00]/10 border border-[#CCFF00]/15 p-2 rounded flex items-center gap-1.5 mt-1 leading-snug">
+                  <ThumbsUp className="w-3.5 h-3.5 text-[#CCFF00] shrink-0" />
+                  <span>Cebu Civic Certified Badge progress: +15 EXP!</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Knowledge Check Card */}

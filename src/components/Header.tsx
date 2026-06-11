@@ -106,13 +106,13 @@ export default function Header({
                 {getHeaderTitle()}
               </h1>
               {currentTab === 'home' && (
-                <span className="text-[8px] font-bold font-mono text-[#CCFF00] border border-[#CCFF00]/30 bg-[#CCFF00]/10 px-1 rounded">
-                  OFFICIAL
+                <span className="text-[8px] font-bold font-mono text-zinc-300 border border-zinc-800 bg-zinc-900 px-1 rounded tracking-wide">
+                  GUIDE
                 </span>
               )}
             </div>
-            <span className="text-[8px] font-mono tracking-widest text-white/50 uppercase block mt-0.5 font-bold leading-none">
-              Cebu City Gov • DMDP
+            <span className="text-[8px] font-mono tracking-widest text-[#CCFF00] uppercase block mt-0.5 font-bold leading-none">
+              Independent Career Guide
             </span>
           </div>
         </div>

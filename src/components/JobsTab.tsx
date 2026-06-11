@@ -1,6 +1,44 @@
 import { useState } from 'react';
-import { MapPin, Banknote, Briefcase, Bookmark, Check, ArrowRight, Search, Sparkles, Clock, X, BadgeCheck } from 'lucide-react';
+import { 
+  MapPin, 
+  Banknote, 
+  Briefcase, 
+  Bookmark, 
+  Check, 
+  ArrowRight, 
+  Search, 
+  Sparkles, 
+  Clock, 
+  X, 
+  BadgeCheck,
+  Compass, 
+  ChevronDown, 
+  ChevronUp, 
+  SlidersHorizontal,
+  ArrowDownUp
+} from 'lucide-react';
 import { Job } from '../types';
+import officeCebu from '../assets/images/office_cebu_1781174008747.png';
+import cebuWarehouseJob from '../assets/images/cebu_warehouse_job_1781175144548.png';
+import cebuResortJob from '../assets/images/cebu_resort_job_1781175164407.png';
+import cebuRetailJob from '../assets/images/cebu_retail_job_1781175182572.png';
+
+const CEBU_BARANGAYS = [
+  { name: 'Guadalupe', distanceFactor: 1.1, baseJeep: '06B / 06H', details: 'Guadalupe Terminal' },
+  { name: 'Mambaling', distanceFactor: 1.3, baseJeep: '01K / 42D', details: 'Cebu South Roadway' },
+  { name: 'Bulacao', distanceFactor: 1.7, baseJeep: '09C / 10G', details: 'South Boundary ride' },
+  { name: 'Lahug / Apas', distanceFactor: 0.5, baseJeep: '17B / 17D', details: 'Direct IT Park route' },
+  { name: 'Talamban', distanceFactor: 1.4, baseJeep: '13C / 62B', details: 'North Main Highway corridor' },
+  { name: 'Labangon', distanceFactor: 1.2, baseJeep: '12L / 12G', details: 'Katipunan bypass' },
+  { name: 'Mabolo', distanceFactor: 0.7, baseJeep: '03B / 04L', details: 'Mabolo flyover junction' }
+];
+
+const COMMUTE_MODES = [
+  { name: 'Traditional Jeepney', dailyCost: 30, timeFactor: 1.35, code: 'PUJ' },
+  { name: 'Modern Aircon Jeep', dailyCost: 38, timeFactor: 1.15, code: 'MPUJ' },
+  { name: 'Angkas / Maxim Bike', dailyCost: 130, timeFactor: 0.65, code: 'MOTO' },
+  { name: 'Walk / Bicycle', dailyCost: 0, timeFactor: 1.4, code: 'ACTIVE' }
+];
 
 interface JobsTabProps {
   isOffline: boolean;
@@ -17,6 +55,12 @@ export default function JobsTab({ isOffline, onSuccessToast, userSkills = [] }: 
   const [appliedJobs, setAppliedJobs] = useState<string[]>([]);
   const [savedJobs, setSavedJobs] = useState<string[]>([]);
   const [showApplyModal, setShowApplyModal] = useState<Job | null>(null);
+
+  // Commute Planner Estimator state
+  const [showEstimator, setShowEstimator] = useState<boolean>(false);
+  const [selectedBarangay, setSelectedBarangay] = useState<string>('Guadalupe');
+  const [commuteMethod, setCommuteMethod] = useState<string>('Modern Aircon Jeep');
+  const [customGoalSalary, setCustomGoalSalary] = useState<number>(20000);
 
   const categories = ['All Industries', 'Tech', 'Logistics', 'Hospitality', 'Retail'];
 
@@ -144,6 +188,200 @@ export default function JobsTab({ isOffline, onSuccessToast, userSkills = [] }: 
         )}
       </div>
 
+      {/* Interactive Cebu Barangay Commute & Salary Estimator */}
+      <div id="commute-estimator" className="glass rounded-lg border border-white/10 overflow-hidden transition-all">
+        <button
+          type="button"
+          onClick={() => {
+            setShowEstimator(!showEstimator);
+            if (!showEstimator) {
+              onSuccessToast("Cebu Barangay Commute Planner active. Adjust your route parameters below!");
+            }
+          }}
+          className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors"
+        >
+          <div className="flex items-center gap-2 text-white">
+            <Compass className="w-4.5 h-4.5 text-[#CCFF00]" />
+            <span className="font-bold text-[14px] uppercase tracking-wider font-mono">
+              Barangay Commute & True Income Estimator
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[9px] font-mono font-bold text-[#CCFF00] bg-[#CCFF00]/10 px-2 py-0.5 rounded border border-[#CCFF00]/15 uppercase tracking-wider">
+              {showEstimator ? 'Hide Planner' : 'Open Planner'}
+            </span>
+            {showEstimator ? (
+              <ChevronUp className="w-4 h-4 text-white/60" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-white/60" />
+            )}
+          </div>
+        </button>
+
+        {showEstimator && (
+          <div className="px-5 pb-5 border-t border-white/5 pt-4 flex flex-col gap-4 animate-slide-down">
+            <p className="text-xs text-white/75 font-sans leading-relaxed">
+              Deduct real-world transit costs and modern/traditional jeepney routing inside Cebu to verify your actual daily take-home pocket pay relative to job salaries.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 font-mono">
+              {/* Selector 1: Barangay */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[9.5px] text-white/50 uppercase tracking-widest font-bold">
+                  My Home Barangay
+                </label>
+                <div className="relative">
+                  <select
+                    id="estimator-barangay-select"
+                    value={selectedBarangay}
+                    onChange={(e) => {
+                      setSelectedBarangay(e.target.value);
+                      onSuccessToast(`Updated home coordinates: Barangay ${e.target.value}`);
+                    }}
+                    className="w-full text-xs h-10 pl-3 pr-8 border border-white/10 rounded bg-[#0a0a0a] text-white focus:border-[#CCFF00] focus:ring-1 focus:ring-[#CCFF00]/15 outline-none appearance-none font-bold uppercase tracking-wide cursor-pointer"
+                  >
+                    {CEBU_BARANGAYS.map((b) => (
+                      <option key={b.name} value={b.name} className="bg-black text-white uppercase text-xs">
+                        {b.name}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="w-3.5 h-3.5 text-white/50 absolute right-3.5 top-3.5 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Selector 2: Commute Method */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[9.5px] text-white/50 uppercase tracking-widest font-bold">
+                  Commute Method
+                </label>
+                <div className="relative">
+                  <select
+                    id="estimator-mode-select"
+                    value={commuteMethod}
+                    onChange={(e) => {
+                      setCommuteMethod(e.target.value);
+                      onSuccessToast(`Calculating via ${e.target.value}`);
+                    }}
+                    className="w-full text-xs h-10 pl-3 pr-8 border border-white/10 rounded bg-[#0a0a0a] text-white focus:border-[#CCFF00] focus:ring-1 focus:ring-[#CCFF00]/15 outline-none appearance-none font-bold uppercase tracking-wide cursor-pointer"
+                  >
+                    {COMMUTE_MODES.map((m) => (
+                      <option key={m.name} value={m.name} className="bg-black text-white uppercase text-xs">
+                        {m.name} ({m.code})
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="w-3.5 h-3.5 text-white/50 absolute right-3.5 top-3.5 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Selector 3: Goal Base Salary */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[9.5px] text-white/50 uppercase tracking-widest font-bold">
+                  Offer Base Salary (PHP)
+                </label>
+                <div className="flex gap-1.5 h-10">
+                  {[14000, 18000, 22000].map((sal) => (
+                    <button
+                      key={sal}
+                      type="button"
+                      onClick={() => setCustomGoalSalary(sal)}
+                      className={`flex-1 text-[10px] leading-none rounded border font-bold text-center flex items-center justify-center cursor-pointer transition-colors ${
+                        customGoalSalary === sal
+                          ? 'bg-[#CCFF00] text-black border-[#CCFF00]'
+                          : 'border-white/10 hover:bg-white/5 text-white/70'
+                      }`}
+                    >
+                      {sal / 1000}K
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Compute variables */}
+            {(() => {
+              const bgy = CEBU_BARANGAYS.find((b) => b.name === selectedBarangay) || CEBU_BARANGAYS[0];
+              const mode = COMMUTE_MODES.find((m) => m.name === commuteMethod) || COMMUTE_MODES[0];
+              
+              // Estimated peak transit time (one way)
+              const baseTimeMinutes = 20;
+              const calcTimeMinutes = Math.floor(baseTimeMinutes * bgy.distanceFactor * mode.timeFactor) + (commuteMethod.includes('Angkas') ? 5 : 12);
+              
+              // Daily transport cost computation
+              const dailyCost = mode.dailyCost;
+              const monthlyCost = dailyCost * 22; // 22 working days
+              const netTakeHome = customGoalSalary - monthlyCost;
+              const profitPercentage = ((netTakeHome / customGoalSalary) * 100).toFixed(0);
+
+              return (
+                <div className="bg-black/40 border border-white/5 rounded-lg p-4 font-mono flex flex-col gap-3.5 text-left text-white animate-fade-in">
+                  <div className="flex justify-between items-start border-b border-white/5 pb-2.5">
+                    <div>
+                      <span className="text-[8.5px] uppercase text-white/40 block tracking-widest leading-none mb-1">Commuter Ticket Journey</span>
+                      <span className="text-xs font-bold text-white uppercase">{bgy.name} Barangay Terminal ──&gt; Cebu Job Location</span>
+                    </div>
+                    <span className="text-[8px] font-black uppercase text-black bg-[#CCFF00] px-1.5 py-0.5 rounded shrink-0">
+                      Cebu-Express PUJ
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="bg-white/5 p-2.5 border border-white/10 rounded">
+                      <span className="text-[7.5px] text-white/45 block uppercase tracking-widest">Recommended Line</span>
+                      <span className="text-[11.5px] font-extrabold text-[#CCFF00] block mt-1 uppercase truncate">{bgy.baseJeep}</span>
+                    </div>
+                    <div className="bg-white/5 p-2.5 border border-white/10 rounded">
+                      <span className="text-[7.5px] text-white/45 block uppercase tracking-widest">Est. Travel Time</span>
+                      <span className="text-[11.5px] font-extrabold text-white block mt-1 uppercase">{calcTimeMinutes} Mins</span>
+                    </div>
+                    <div className="bg-white/5 p-2.5 border border-white/10 rounded">
+                      <span className="text-[7.5px] text-white/45 block uppercase tracking-widest">Daily Cost</span>
+                      <span className="text-[11.5px] font-extrabold text-[#CCFF00] block mt-1 uppercase">PHP {dailyCost}</span>
+                    </div>
+                    <div className="bg-white/5 p-2.5 border border-white/10 rounded">
+                      <span className="text-[7.5px] text-white/45 block uppercase tracking-widest">Monthly Cost</span>
+                      <span className="text-[11.5px] font-extrabold text-white block mt-1 uppercase">PHP {monthlyCost}</span>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-white/5 pt-3 flex flex-col gap-2">
+                    <div className="flex justify-between items-baseline text-xs">
+                      <span className="text-white/50 tracking-wider">ESTIMATED NET TAKE-HOME SALARY</span>
+                      <span className="font-extrabold text-white">PHP {netTakeHome.toLocaleString()} / month</span>
+                    </div>
+                    
+                    {/* Visual Progress/Budget Meter representing taking home vs transport expenses */}
+                    <div className="w-full bg-white/10 h-2 rounded overflow-hidden relative">
+                      <div className="bg-[#CCFF00] h-full transition-all duration-300" style={{ width: `${profitPercentage}%` }}></div>
+                    </div>
+                    
+                    <div className="flex justify-between text-[10px] text-white/40 font-mono">
+                      <span>{monthlyCost > 0 ? `COMMUTE REDUCTION: ${((monthlyCost / customGoalSalary) * 100).toFixed(0)}%` : 'NO TRANSIT DEDUCTIONS'}</span>
+                      <span className="text-[#CCFF00] font-bold">{profitPercentage}% RETAINED FOR SAVINGS</span>
+                    </div>
+                  </div>
+
+                  {/* Dynamic Cebuano Local Pro Commute Tip */}
+                  <div className="bg-[#CCFF00]/5 border border-[#CCFF00]/15 p-2 px-2.5 rounded text-[10.5px] text-white/80 leading-relaxed font-sans flex items-start gap-1.5 mt-0.5">
+                    <span className="text-[#CCFF00] shrink-0 font-bold font-mono">💡 TIP:</span>
+                    <p>
+                      {commuteMethod.includes('Angkas') ? (
+                        <span>By taking an air-conditioned modern Jeepney instead of motorcycle rides, you save over <strong className="text-white">PHP {(2024 - monthlyCost) < 0 ? 1900 : Math.abs(130*22 - monthlyCost)} monthly</strong> which adds almost 10% to your true household savings! Direct lines like 17B can connect you hassle-free to Cebu IT Park.</span>
+                      ) : selectedBarangay.includes('Lahug') ? (
+                        <span>Since you live in Lahug/Apas, you are extremely close to Cebu IT Park! Walking or riding a short bicycle allows you to keep <strong className="text-white">100% of your earnings</strong> inside your pocket.</span>
+                      ) : (
+                        <span>Taking the direct jeep route <strong className="text-white">{bgy.baseJeep}</strong> from {bgy.name} Terminal gives you maximum budget efficiency. Use the offline lessons inside your phone while travelling to upskill productively!</span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        )}
+      </div>
+
       {/* Grid / Stack of Job items */}
       <div className="flex flex-col gap-4 mt-1">
         {filteredJobs.length > 0 ? (
@@ -179,22 +417,37 @@ export default function JobsTab({ isOffline, onSuccessToast, userSkills = [] }: 
                 </div>
 
                 {/* Job Title and overview */}
-                <div>
-                  <h3 className="text-[18px] font-black text-white uppercase tracking-tight display-font leading-snug">
-                    {job.title}
-                  </h3>
-                  
-                  {/* Info meta row */}
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-2 text-xs text-white/60 font-mono uppercase tracking-wider">
-                    <span className="flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5 text-white/30 shrink-0" />
-                      {job.location}
-                    </span>
-                    <span className="flex items-center gap-1 font-bold text-[#CCFF00]">
-                      <Banknote className="w-3.5 h-3.5 text-white/30 shrink-0" />
-                      {job.salary}
-                    </span>
+                <div className="flex gap-4 items-start flex-row justify-between">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-[17px] sm:text-[18px] font-black text-white uppercase tracking-tight display-font leading-snug">
+                      {job.title}
+                    </h3>
+                    
+                    {/* Info meta row */}
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-2 text-xs text-white/60 font-mono uppercase tracking-wider">
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5 text-white/30 shrink-0" />
+                        {job.location}
+                      </span>
+                      <span className="flex items-center gap-1 font-bold text-[#CCFF00]">
+                        <Banknote className="w-3.5 h-3.5 text-white/30 shrink-0" />
+                        {job.salary}
+                      </span>
+                    </div>
                   </div>
+
+                  {/* Workplace illustration / brand logo */}
+                  <img 
+                    src={
+                      job.id === 'job-1' ? officeCebu : 
+                      job.id === 'job-2' ? cebuWarehouseJob : 
+                      job.id === 'job-3' ? cebuResortJob : 
+                      cebuRetailJob
+                    }
+                    alt={`${job.title} workplace`}
+                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg object-cover border border-white/10 shrink-0 shadow-sm"
+                    referrerPolicy="no-referrer"
+                  />
                 </div>
 
                 {/* Short excerpt */}

@@ -19,6 +19,13 @@ import {
 } from 'lucide-react';
 import { ResumeData, WorkExperience, EducationEntry } from '../types';
 
+const getInitials = (name: string) => {
+  if (!name) return 'GP';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
+
 interface ResumeBuilderProps {
   user: { name: string; skills: string[] } | null;
   onSuccessToast: (msg: string) => void;
@@ -30,7 +37,11 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
     const saved = localStorage.getItem('cebu_talent_resume_data');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.email === 'johnpaolo.cabaluna@dbtc-cebu.edu.ph') {
+          parsed.email = 'applicant@sugbotrabaho.ph';
+        }
+        return parsed;
       } catch (e) {
         // Fallback
       }
@@ -59,13 +70,13 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
         id: '1',
         school: 'Don Bosco Technical College Cebu',
         degree: 'Technical Vocational Education Program',
-        gradYear: '2024'
+        gradYear: '2028'
       }
     ];
 
     return {
       phone: '+63 917 482 9182',
-      email: 'johnpaolo.cabaluna@dbtc-cebu.edu.ph',
+      email: 'applicant@sugbotrabaho.ph',
       location: 'Cebu IT Park, Lahug',
       summary: 'Highly energetic and qualified local tech candidate possessing active certificates in professional communication and support basics. Focused on starting a career in Cebu\'s leading upscaling industries.',
       experiences: initialExp,
@@ -86,7 +97,7 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
   // Education sub-form states
   const [newSchool, setNewSchool] = useState('');
   const [newDegree, setNewDegree] = useState('');
-  const [newGradYear, setNewGradYear] = useState('');
+  const [newGradYear, setNewGradYear] = useState('2028');
 
   // Export progress animation
   const [isDownloading, setIsDownloading] = useState(false);
@@ -164,7 +175,7 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
     }));
     setNewSchool('');
     setNewDegree('');
-    setNewGradYear('');
+    setNewGradYear('2028');
     onSuccessToast('Education background recorded!');
   };
 
@@ -180,10 +191,10 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
   // Export pdf mock handler
   const triggerPdfExport = () => {
     setIsDownloading(true);
-    onSuccessToast('Transpiling official upskilling certifications, badges & career entries...');
+    onSuccessToast('Transpiling career portfolio entries & skill-alignment badges...');
     setTimeout(() => {
       setIsDownloading(false);
-      onSuccessToast('Success! High-resolution official resume PDF saved to Downloads.');
+      onSuccessToast('Success! High-resolution resume PDF saved to Downloads.');
     }, 2000);
   };
 
@@ -202,7 +213,7 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
               Civic Resume Designer
             </h3>
             <span className="text-[9.5px] font-mono tracking-widest text-[#CCFF00] uppercase mt-1 block">
-              Official Cebu DMDP Integration
+              DMDP Vocational Standard Alignment
             </span>
           </div>
         </div>
@@ -329,15 +340,15 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
                   {resumeData.experiences.map((exp) => (
                     <div 
                       key={exp.id} 
-                      className="bg-white/5 border border-white/5 rounded p-3 flex justify-between items-start text-xs font-sans group relative"
+                      className="bg-white/5 border border-white/5 rounded p-3 flex justify-between items-start text-xs font-sans group relative gap-3"
                     >
-                      <div className="flex gap-2">
+                      <div className="flex gap-2.5 min-w-0 flex-1">
                         <Briefcase className="w-4 h-4 text-[#CCFF00] shrink-0 mt-0.5" />
-                        <div>
-                          <h4 className="font-bold text-white text-[13px]">{exp.role}</h4>
-                          <span className="text-[11px] text-white/60 font-medium font-mono">{exp.company} • {exp.duration}</span>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="font-bold text-white text-[13px] break-words">{exp.role}</h4>
+                          <span className="text-[11.5px] text-white/70 font-medium font-mono break-words block mt-0.5">{exp.company} • {exp.duration}</span>
                           {exp.description && (
-                            <p className="text-[10px] text-white/40 mt-1 leading-relaxed max-w-[280px] line-clamp-2">
+                            <p className="text-[10px] text-white/50 mt-1 leading-relaxed break-words whitespace-pre-line">
                               {exp.description}
                             </p>
                           )}
@@ -362,7 +373,7 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
                 + Add Work Experience Entry
               </span>
               
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div className="flex flex-col gap-1">
                   <label className="text-[8px] uppercase text-white/50">Company Name</label>
                   <input
@@ -370,8 +381,8 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
                     required
                     value={newCompany}
                     onChange={(e) => setNewCompany(e.target.value)}
-                    placeholder="e.g. Sykes Cebu"
-                    className="bg-black/60 border border-white/10 rounded h-8.5 px-2.5 text-xs focus:border-[#CCFF00] outline-none"
+                    placeholder=""
+                    className="w-full bg-black/60 border border-white/10 rounded h-8.5 px-2.5 text-xs focus:border-[#CCFF00] outline-none"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
@@ -381,8 +392,8 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
                     required
                     value={newRole}
                     onChange={(e) => setNewRole(e.target.value)}
-                    placeholder="e.g. Support Specialist"
-                    className="bg-black/60 border border-white/10 rounded h-8.5 px-2.5 text-xs focus:border-[#CCFF00] outline-none"
+                    placeholder=""
+                    className="w-full bg-black/60 border border-white/10 rounded h-8.5 px-2.5 text-xs focus:border-[#CCFF00] outline-none"
                   />
                 </div>
               </div>
@@ -394,8 +405,8 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
                     type="text"
                     value={newDuration}
                     onChange={(e) => setNewDuration(e.target.value)}
-                    placeholder="e.g. 2023 - 2024"
-                    className="bg-black/60 border border-white/10 rounded h-8.5 px-2.5 text-xs focus:border-[#CCFF00] outline-none"
+                    placeholder=""
+                    className="w-full bg-black/60 border border-white/10 rounded h-8.5 px-2.5 text-xs focus:border-[#CCFF00] outline-none"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
@@ -404,8 +415,8 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
                     type="text"
                     value={newDesc}
                     onChange={(e) => setNewDesc(e.target.value)}
-                    placeholder="Brief highlights of responsibilities"
-                    className="bg-black/60 border border-white/10 rounded h-8.5 px-2.5 text-xs focus:border-[#CCFF00] outline-none"
+                    placeholder=""
+                    className="w-full bg-black/60 border border-white/10 rounded h-8.5 px-2.5 text-xs focus:border-[#CCFF00] outline-none"
                   />
                 </div>
               </div>
@@ -434,14 +445,14 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
                   {resumeData.educationList.map((edu) => (
                     <div 
                       key={edu.id} 
-                      className="bg-white/5 border border-white/5 rounded p-3 flex justify-between items-start text-xs font-sans inline-flex w-full group relative"
+                      className="bg-white/5 border border-white/5 rounded p-3 flex justify-between items-start text-xs font-sans w-full group relative gap-3 text-left"
                     >
-                      <div className="flex gap-2">
+                      <div className="flex gap-2.5 min-w-0 flex-1">
                         <GraduationCap className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                        <div>
-                          <h4 className="font-bold text-white text-[13px]">{edu.school}</h4>
-                          <span className="text-[11px] text-white/60 font-medium font-mono">
-                            {edu.degree} • Graduation Year: {edu.gradYear}
+                        <div className="min-w-0 flex-1">
+                          <h4 className="font-bold text-white text-[13px] break-words">{edu.school}</h4>
+                          <span className="text-[11px] text-white/70 font-medium font-mono break-words block mt-0.5">
+                            {edu.degree} • Completion: {edu.gradYear}
                           </span>
                         </div>
                       </div>
@@ -476,8 +487,8 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
-                <div className="flex flex-col gap-1">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div className="flex flex-col gap-1 col-span-1 sm:col-span-2">
                   <label className="text-[8px] uppercase text-white/50">Degree / Trade Certificate</label>
                   <input
                     type="text"
@@ -485,17 +496,17 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
                     value={newDegree}
                     onChange={(e) => setNewDegree(e.target.value)}
                     placeholder="e.g. Information Technology Certificate"
-                    className="bg-black/60 border border-white/10 rounded h-8.5 px-2.5 text-xs focus:border-[#CCFF00] outline-none"
+                    className="w-full bg-black/60 border border-white/10 rounded h-8.5 px-2.5 text-xs focus:border-[#CCFF00] outline-none"
                   />
                 </div>
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 col-span-1">
                   <label className="text-[8px] uppercase text-white/50">Completion Year</label>
                   <input
                     type="text"
                     value={newGradYear}
                     onChange={(e) => setNewGradYear(e.target.value)}
-                    placeholder="e.g. 2024"
-                    className="bg-black/60 border border-white/10 rounded h-8.5 px-2.5 text-xs focus:border-[#CCFF00] outline-none"
+                    placeholder="e.g. 2028"
+                    className="w-full bg-black/60 border border-white/10 rounded h-8.5 px-2.5 text-xs focus:border-[#CCFF00] outline-none"
                   />
                 </div>
               </div>
@@ -566,7 +577,7 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
               {resumeData.template === 'civic' && (
                 <div className="absolute -right-8 -bottom-8 w-36 h-36 rounded-full border border-blue-800/5 rotate-12 flex items-center justify-center pointer-events-none select-none">
                   <div className="w-32 h-32 rounded-full border-4 border-dashed border-blue-800/10 flex items-center justify-center font-bold font-mono text-[9px] text-blue-800/10 text-center leading-none tracking-widest uppercase">
-                    Cebu City Gov<br/>DMDP<br/>Certified
+                    DMDP MODEL<br/>CURRICULUM<br/>ALIGNED
                   </div>
                 </div>
               )}
@@ -576,10 +587,10 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
                 {resumeData.template === 'civic' && (
                   <>
                     <span className="text-[7px] font-bold tracking-[0.2em] font-mono text-slate-500 block uppercase leading-none">
-                      Republic of the Philippines
+                      Independent Civic Template Guide
                     </span>
                     <span className="text-[7px] font-bold tracking-[0.1em] font-mono text-slate-400 block uppercase leading-none mt-0.5">
-                      DEPARTMENT OF MANPOWER DEVELOPMENT AND PLACEMENT • CEBU CITY
+                      Styled for Cebu DMDP Vocational Recommendations
                     </span>
                   </>
                 )}
@@ -594,20 +605,25 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
               </div>
 
               {/* Personal Block */}
-              <div className="flex flex-col gap-1 relative">
-                <h3 className="text-sm font-extrabold text-slate-900 uppercase font-sans tracking-wide">
-                  {user?.name || 'John Paolo Cabaluna'}
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-y-1 gap-x-2 text-[9px] text-slate-600 font-mono mt-0.5">
-                  <span className="truncate flex items-center gap-1">
-                    <span className="text-blue-500">☎</span> {resumeData.phone}
-                  </span>
-                  <span className="truncate flex items-center gap-1">
-                    <span className="text-blue-500">✉</span> {resumeData.email}
-                  </span>
-                  <span className="truncate flex items-center gap-1">
-                    <span className="text-blue-500">📍</span> {resumeData.location}
-                  </span>
+              <div className="flex items-center gap-3.5 border-t border-slate-100 pt-3 flex-row relative">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-lg bg-slate-900 border border-slate-800 text-white flex items-center justify-center font-black font-mono text-sm shadow-sm tracking-wide shrink-0 select-none">
+                  {getInitials(user?.name || 'John Paolo Cabaluna')}
+                </div>
+                <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                  <h3 className="text-sm font-extrabold text-slate-900 uppercase font-sans tracking-wide leading-none">
+                    {user?.name || 'John Paolo Cabaluna'}
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-y-1 gap-x-2 text-[9px] text-slate-600 font-mono mt-0.5">
+                    <span className="truncate flex items-center gap-1">
+                      <span className="text-blue-500 font-sans block shrink-0">☎</span> {resumeData.phone}
+                    </span>
+                    <span className="truncate flex items-center gap-1">
+                      <span className="text-blue-500 font-sans block shrink-0">✉</span> {resumeData.email}
+                    </span>
+                    <span className="truncate flex items-center gap-1">
+                      <span className="text-blue-500 font-sans block shrink-0">📍</span> {resumeData.location}
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -678,7 +694,7 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
                 <span className={`text-[8.5px] font-bold tracking-widest font-mono uppercase block ${
                   resumeData.template === 'civic' ? 'text-blue-700' : 'text-slate-800 border-b border-slate-200 pb-0.5 mb-1'
                 }`}>
-                  DMDP-Certified Skills Network
+                  Completed Skills Portfolio (DMDP Style)
                 </span>
                 <div className="flex flex-wrap gap-1 pr-6">
                   {user && user.skills.length > 0 ? (
@@ -709,15 +725,15 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
                     <div className="w-[1.5px] h-4 bg-slate-800"></div>
                   </div>
                   <span className="text-[6px] font-mono text-slate-400 font-bold uppercase tracking-widest leading-none">
-                    REG-DMDP-{user?.name.slice(0,4).toUpperCase() || 'CIV'}
+                    REF-ALIGN-{user?.name.slice(0,4).toUpperCase() || 'CIV'}
                   </span>
                 </div>
                 <div className="text-right">
                   <span className="text-[7px] font-bold text-slate-400 block uppercase leading-none font-mono">
-                    Official Enrolled Profile
+                    Independent CV Format
                   </span>
-                  <span className="text-[6.5px] font-bold text-blue-700 block uppercase mt-0.5 font-mono">
-                    Cebu Government Database Core
+                  <span className="text-[6.5px] font-bold text-slate-500 block uppercase mt-0.5 font-mono">
+                    Skills-Aligned Output
                   </span>
                 </div>
               </div>
@@ -725,23 +741,32 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
             </div>
 
             {/* Main Action Callouts */}
-            <button
-              onClick={triggerPdfExport}
-              disabled={isDownloading}
-              className="w-full h-11 bg-cyan-500 hover:bg-cyan-400 text-neutral-900 disabled:bg-white/5 disabled:text-white/30 rounded font-extrabold uppercase text-xs tracking-widest transition-all cursor-pointer flex items-center justify-center gap-2 font-mono"
-            >
-              {isDownloading ? (
-                <>
-                  <RefreshCw className="w-4 h-4 animate-spin text-neutral-900" />
-                  <span>Packaging Print Stream...</span>
-                </>
-              ) : (
-                <>
-                  <Download className="w-4 h-4 text-neutral-900" />
-                  <span>Download Print-Ready PDF</span>
-                </>
-              )}
-            </button>
+            <div className="flex flex-col gap-2.5">
+              <button
+                onClick={triggerPdfExport}
+                disabled={isDownloading}
+                className="w-full h-11 bg-cyan-500 hover:bg-cyan-400 text-neutral-900 disabled:bg-white/5 disabled:text-white/30 rounded font-extrabold uppercase text-xs tracking-widest transition-all cursor-pointer flex items-center justify-center gap-2 font-mono"
+              >
+                {isDownloading ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin text-neutral-900" />
+                    <span>Packaging Print Stream...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-4 h-4 text-neutral-900" />
+                    <span>Download Print-Ready PDF</span>
+                  </>
+                )}
+              </button>
+              
+              <div className="bg-white/5 border border-white/5 rounded-lg p-2.5 text-[10px] font-sans text-white/70 leading-normal flex items-start gap-2">
+                <span className="text-[#CCFF00] shrink-0 font-bold mt-0.5">💡</span>
+                <p>
+                  <strong className="text-white">Next Step:</strong> Print this exported PDF and submit it directly to the local <strong className="text-[#CCFF00]">DMDP Office (Ramos, Cebu City)</strong> or present it during regional hiring events to instantly showcase your aligned vocational skills!
+                </p>
+              </div>
+            </div>
           </div>
         )}
       </div>
