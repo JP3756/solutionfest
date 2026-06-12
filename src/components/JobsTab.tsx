@@ -1,6 +1,62 @@
 import { useState } from 'react';
-import { MapPin, Banknote, Briefcase, Bookmark, Check, ArrowRight, Search, Sparkles, Clock, X, BadgeCheck } from 'lucide-react';
+import { 
+  MapPin, 
+  Banknote, 
+  Briefcase, 
+  Bookmark, 
+  Check, 
+  ArrowRight, 
+  Search, 
+  Sparkles, 
+  Clock, 
+  X, 
+  BadgeCheck,
+  Compass, 
+  ChevronDown, 
+  ChevronUp, 
+  SlidersHorizontal,
+  ArrowDownUp
+} from 'lucide-react';
 import { Job } from '../types';
+import officeCebu from '../assets/images/office_cebu_1781174008747.png';
+import cebuWarehouseJob from '../assets/images/cebu_warehouse_job_1781175144548.png';
+import cebuResortJob from '../assets/images/cebu_resort_job_1781175164407.png';
+import cebuRetailJob from '../assets/images/cebu_retail_job_1781175182572.png';
+
+const TARGET_CAREERS = [
+  {
+    name: 'Customer Support (BPO)',
+    category: 'Tech',
+    requiredSkills: ['Customer Support', 'Polite Communication', 'English Conversation'],
+    recommendedCourse: 'Customer Communication Excellence',
+    courseProvider: 'Cebu Virtual College & TESDA Alignment',
+    estHours: '20 Hours'
+  },
+  {
+    name: 'Office Filing & Data Clerk',
+    category: 'Tech',
+    requiredSkills: ['Basic Computer Skills', 'Data Typing & Entry', 'Office Filing & Clerical'],
+    recommendedCourse: 'Digital Literacy & Modern Spreadsheets',
+    courseProvider: 'Cebu Institute of Tech & Public Access Guides',
+    estHours: '15 Hours'
+  },
+  {
+    name: 'Hotel Guest Receptionist',
+    category: 'Hospitality',
+    requiredSkills: ['Polite Communication', 'Hotel & Housekeeping Support', 'English Conversation'],
+    recommendedCourse: 'Tourism & Front-Office Hospitality Essentials',
+    courseProvider: 'Cebu Academy for Vocational Tourism',
+    estHours: '25 Hours'
+  },
+  {
+    name: 'Retail Store Associate',
+    category: 'Retail',
+    requiredSkills: ['Retail Sales & Cashiering', 'Basic Computer Skills', 'Willing to Learn'],
+    recommendedCourse: 'Point-of-Sale Systems & Customer Service Training',
+    courseProvider: 'Sugbo Enterprise Retail Association',
+    estHours: '12 Hours'
+  }
+];
 
 interface JobsTabProps {
   isOffline: boolean;
@@ -17,6 +73,10 @@ export default function JobsTab({ isOffline, onSuccessToast, userSkills = [] }: 
   const [appliedJobs, setAppliedJobs] = useState<string[]>([]);
   const [savedJobs, setSavedJobs] = useState<string[]>([]);
   const [showApplyModal, setShowApplyModal] = useState<Job | null>(null);
+
+  // UpSkills Gap Analyzer state
+  const [showAnalyzer, setShowAnalyzer] = useState<boolean>(false);
+  const [targetCareerInput, setTargetCareerInput] = useState<string>('Customer Support (BPO)');
 
   const categories = ['All Industries', 'Tech', 'Logistics', 'Hospitality', 'Retail'];
 
@@ -105,8 +165,253 @@ export default function JobsTab({ isOffline, onSuccessToast, userSkills = [] }: 
 
   return (
     <div className="flex flex-col gap-4 animate-fade-in pb-12 text-white">
+      {/* Interactive Cebu Job Match Score & Skill Gap Analyzer */}
+      <div id="commute-estimator" className="glass rounded-lg border border-white/10 overflow-hidden transition-all">
+        <button
+          type="button"
+          onClick={() => {
+            setShowAnalyzer(!showAnalyzer);
+            if (!showAnalyzer) {
+              onSuccessToast("Cebu Job Match & Gap Analyzer active. Pick your target career!");
+            }
+          }}
+          className="w-full px-3 py-3.5 flex items-center justify-between text-left hover:bg-white/5 transition-colors gap-1.5"
+        >
+          <div className="flex items-center gap-1.5 text-white min-w-0 flex-1">
+            <Compass className="w-4 h-4 text-[#CCFF00] shrink-0" />
+            <span className="font-bold text-[11px] sm:text-[13px] uppercase tracking-tight sm:tracking-wider font-mono truncate">
+              Cebu Upskill & Matching Analyzer
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="text-[8px] sm:text-[9px] font-mono font-bold text-[#CCFF00] bg-[#CCFF00]/10 px-1.5 py-0.5 rounded border border-[#CCFF00]/15 uppercase tracking-wider whitespace-nowrap">
+              {showAnalyzer ? 'Hide' : 'Open'}
+            </span>
+            {showAnalyzer ? (
+              <ChevronUp className="w-3.5 h-3.5 text-white/60" />
+            ) : (
+              <ChevronDown className="w-3.5 h-3.5 text-white/60" />
+            )}
+          </div>
+        </button>
+
+        {showAnalyzer && (
+          <div className="px-3 pb-4 border-t border-white/5 pt-3 flex flex-col gap-3.5 animate-slide-down">
+            <p className="text-[11px] sm:text-xs text-white/75 font-sans leading-relaxed">
+              Understand how close you are to landing your target career path in Cebu. We will check your current skills, highlight gaps, and recommend direct accredited upskilling paths!
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono">
+              {/* Selector 1: Target Career */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[9px] text-white/50 uppercase tracking-widest font-bold">
+                  Target Career Role
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    id="analyzer-career-select"
+                    value={targetCareerInput}
+                    onChange={(e) => {
+                      setTargetCareerInput(e.target.value);
+                    }}
+                    placeholder="E.g., Software, BPO, Sales..."
+                    className="w-full text-xs h-10 px-3 border border-white/10 rounded bg-[#0a0a0a] text-white focus:border-[#CCFF00] focus:ring-1 focus:ring-[#CCFF00]/15 outline-none font-bold uppercase tracking-wide cursor-text placeholder-white/30"
+                  />
+                </div>
+              </div>
+
+              {/* Quick Info Field */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[9px] text-white/50 uppercase tracking-widest font-bold font-mono">
+                  Current Certified Talents
+                </label>
+                <div className="min-h-10 py-1.5 px-2.5 bg-white/5 border border-white/10 rounded flex items-center justify-between gap-1 text-[10.5px] sm:text-xs text-white/80 font-bold">
+                  <span className="truncate">{userSkills.length} SKILLS ACTIVE</span>
+                  <span className="text-emerald-400 font-mono text-[8px] bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/15 shrink-0">ACTIVE</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Compute and Render Math */}
+            {(() => {
+              const inputLower = targetCareerInput.toLowerCase();
+              let career = TARGET_CAREERS.find((tc) => tc.name.toLowerCase() === inputLower);
+              
+              if (!career) {
+                // Look for substring matches
+                const matchedStatic = TARGET_CAREERS.find((tc) => 
+                  tc.name.toLowerCase().includes(inputLower) || 
+                  inputLower.includes(tc.name.toLowerCase())
+                );
+                
+                if (matchedStatic) {
+                  career = matchedStatic;
+                } else {
+                  // Generate custom career dynamic schema
+                  if (inputLower.includes('bpo') || inputLower.includes('support') || inputLower.includes('call') || inputLower.includes('agent') || inputLower.includes('chat') || inputLower.includes('service') || inputLower.includes('customer')) {
+                    career = {
+                      name: targetCareerInput || 'Customer Support',
+                      category: 'Tech',
+                      requiredSkills: ['Customer Support', 'Polite Communication', 'English Conversation'],
+                      recommendedCourse: 'Customer Communication Excellence',
+                      courseProvider: 'Cebu Virtual College & TESDA Alignment',
+                      estHours: '20 Hours'
+                    };
+                  } else if (inputLower.includes('clerk') || inputLower.includes('data') || inputLower.includes('office') || inputLower.includes('file') || inputLower.includes('entry') || inputLower.includes('typing') || inputLower.includes('admin') || inputLower.includes('secretary')) {
+                    career = {
+                      name: targetCareerInput || 'Office Clerk',
+                      category: 'Tech',
+                      requiredSkills: ['Basic Computer Skills', 'Data Typing & Entry', 'Office Filing & Clerical'],
+                      recommendedCourse: 'Digital Literacy & Modern Spreadsheets',
+                      courseProvider: 'Cebu Institute of Tech & Public Access Guides',
+                      estHours: '15 Hours'
+                    };
+                  } else if (inputLower.includes('hotel') || inputLower.includes('reception') || inputLower.includes('guest') || inputLower.includes('waiter') || inputLower.includes('tourist') || inputLower.includes('hospitality') || inputLower.includes('resort')) {
+                    career = {
+                      name: targetCareerInput || 'Guest Receptionist',
+                      category: 'Hospitality',
+                      requiredSkills: ['Polite Communication', 'Hotel & Housekeeping Support', 'English Conversation'],
+                      recommendedCourse: 'Tourism & Front-Office Hospitality Essentials',
+                      courseProvider: 'Cebu Academy for Vocational Tourism',
+                      estHours: '25 Hours'
+                    };
+                  } else if (inputLower.includes('retail') || inputLower.includes('store') || inputLower.includes('cashier') || inputLower.includes('sales') || inputLower.includes('seller') || inputLower.includes('market')) {
+                    career = {
+                      name: targetCareerInput || 'Retail Associate',
+                      category: 'Retail',
+                      requiredSkills: ['Retail Sales & Cashiering', 'Basic Computer Skills', 'Willing to Learn'],
+                      recommendedCourse: 'Point-of-Sale Systems & Customer Service Training',
+                      courseProvider: 'Sugbo Enterprise Retail Association',
+                      estHours: '12 Hours'
+                    };
+                  } else if (inputLower.includes('programmer') || inputLower.includes('developer') || inputLower.includes('software') || inputLower.includes('code') || inputLower.includes('it') || inputLower.includes('web')) {
+                    career = {
+                      name: targetCareerInput || 'Software Developer',
+                      category: 'Tech',
+                      requiredSkills: ['Basic Computer Skills', 'Problem Solving', 'Willing to Learn'],
+                      recommendedCourse: 'Introduction to Modern Digital Technology & Coding',
+                      courseProvider: 'Sugbo IT Training Centers',
+                      estHours: '30 Hours'
+                    };
+                  } else {
+                    career = {
+                      name: targetCareerInput || 'Custom Career Choice',
+                      category: 'General',
+                      requiredSkills: ['Problem Solving', 'Willing to Learn', 'Polite Communication'],
+                      recommendedCourse: 'Vocational Work Ethic & Practical Livelihood Skills',
+                      courseProvider: 'TESDA Cebu Accredited Livelihood Center',
+                      estHours: '16 Hours'
+                    };
+                  }
+                }
+              }
+              
+              // Calculate matches and gaps
+              const matchedSkillsList = career.requiredSkills.filter(
+                (reqSkill) => userSkills.some((userSkill) => userSkill.toLowerCase() === reqSkill.toLowerCase())
+              );
+              const missingSkillsList = career.requiredSkills.filter(
+                (reqSkill) => !userSkills.some((userSkill) => userSkill.toLowerCase() === reqSkill.toLowerCase())
+              );
+
+              const totalCount = career.requiredSkills.length;
+              const matchedCount = matchedSkillsList.length;
+              const matchScorePercentage = Math.round((matchedCount / totalCount) * 100);
+
+              return (
+                <div className="bg-black/40 border border-white/5 rounded-lg p-4 font-mono flex flex-col gap-3.5 text-left text-white animate-fade-in">
+                  <div className="flex justify-between items-start border-b border-white/5 pb-2.5">
+                    <div>
+                      <span className="text-[8.5px] uppercase text-[#CCFF00]/80 block tracking-widest leading-none mb-1">Target Skill Alignment</span>
+                      <span className="text-xs font-bold text-white uppercase">{career.name} Standard Syllabus</span>
+                    </div>
+                    <span className="text-[8px] font-black uppercase text-black bg-[#CCFF00] px-1.5 py-0.5 rounded shrink-0">
+                      {career.category} Field
+                    </span>
+                  </div>
+
+                  {/* Skill checklist grids */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="bg-emerald-500/5 p-3 border border-emerald-500/15 rounded">
+                      <span className="text-[8px] text-emerald-400 block uppercase tracking-widest font-bold">Skills Matched ({matchedCount}/{totalCount})</span>
+                      {matchedCount > 0 ? (
+                        <div className="flex flex-wrap gap-1 mt-1.5">
+                          {matchedSkillsList.map((sk) => (
+                            <span key={sk} className="text-[9.5px] font-bold text-emerald-300 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 uppercase truncate">
+                              ✓ {sk}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-[10.5px] text-white/50 block mt-2">No starting skills match yet.</span>
+                      )}
+                    </div>
+
+                    <div className="bg-red-500/5 p-3 border border-red-500/15 rounded">
+                      <span className="text-[8px] text-red-400 block uppercase tracking-widest font-bold">Gaps to Bridge ({missingSkillsList.length})</span>
+                      {missingSkillsList.length > 0 ? (
+                        <div className="flex flex-wrap gap-1 mt-1.5">
+                          {missingSkillsList.map((sk) => (
+                            <span key={sk} className="text-[9.5px] font-bold text-red-300 bg-red-500/10 px-2 py-0.5 rounded border border-[#000000]/10 uppercase truncate">
+                              ✕ {sk}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-[10.5px] text-[#CCFF00] block mt-1.5 font-bold">★ Perfect match! Super job-ready.</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Job Match Score visualization */}
+                  <div className="border-t border-white/5 pt-3 flex flex-col gap-2">
+                    <div className="flex justify-between items-baseline text-xs">
+                      <span className="text-white/50 tracking-wider">DYNAMIC JOB MATCH SCORE</span>
+                      <span className="font-extrabold text-white">{matchScorePercentage}% MATCHED</span>
+                    </div>
+                    
+                    {/* Visual Progress Meter representing score */}
+                    <div className="w-full bg-white/10 h-2 rounded overflow-hidden relative">
+                      <div className="bg-[#CCFF00] h-full transition-all duration-300" style={{ width: `${matchScorePercentage}%` }}></div>
+                    </div>
+                    
+                    <div className="flex justify-between text-[9.5px] text-white/40 font-mono">
+                      <span>{missingSkillsList.length > 0 ? `${missingSkillsList.length} skillset requirements missing` : '100% SUBSCRIBED'}</span>
+                      <span className="text-[#CCFF00] font-bold">
+                        {matchScorePercentage === 100 ? 'READY TO APPLY FOR IMMEDIATE JOBS' : 'REQUIRES TARGET TRAINING COURSE'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Targeted learning path recommendation */}
+                  {missingSkillsList.length > 0 && (
+                    <div className="bg-[#CCFF00]/5 border border-[#CCFF00]/15 p-2.5 rounded text-[11px] text-white/80 leading-relaxed font-sans flex flex-col gap-2.5 mt-0.5">
+                      <div className="flex items-center gap-1 text-[#CCFF00]">
+                        <span className="font-bold text-[10px] font-mono uppercase bg-[#CCFF00]/15 px-1.5 py-0.5 rounded border border-[#CCFF00]/30 animate-pulse">RECOMMENDED COUPLING</span>
+                      </div>
+                      <div className="bg-white/5 border border-white/5 p-2 rounded">
+                        <span className="text-[8px] font-mono uppercase text-white/45 block tracking-widest">Bridging Course Path</span>
+                        <span className="text-xs font-black text-white block mt-0.5 uppercase">{career.recommendedCourse}</span>
+                        <div className="flex justify-between text-[9px] text-[#CCFF00]/80 font-mono mt-1 font-bold">
+                          <span>{career.courseProvider}</span>
+                          <span>Est: {career.estHours}</span>
+                        </div>
+                      </div>
+                      <p className="text-[10px] text-white/70">
+                        Complete this brief course inside our <strong className="text-white font-bold">Learn Hub</strong> to instantly close these skill gaps, boost your Job Match Score, and auto-submit your application!
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
+        )}
+      </div>
+
       {/* Category Tabs list with dark kinetic layout backdrop */}
-      <div className="w-full overflow-x-auto scrollbar-none flex gap-2 pb-1.5 pt-1 -mx-4 px-4 sticky top-[30px] sm:top-[38px] bg-black z-40">
+      <div className="w-full overflow-x-auto scrollbar-none flex gap-2 pb-1.5 pt-1 mb-1">
         {categories.map((cat) => (
           <button
             key={cat}
@@ -128,12 +433,12 @@ export default function JobsTab({ isOffline, onSuccessToast, userSkills = [] }: 
         <input
           id="job-seach-input"
           type="text"
-          placeholder="Search jobs, locations, or skills..."
+          placeholder="Search jobs or skills..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full text-[13px] pl-10 pr-4 h-11 border border-white/10 rounded focus:border-[#CCFF00] focus:ring-1 focus:ring-[#CCFF00]/20 outline-none bg-[#0a0a0a] text-white font-mono uppercase tracking-wider"
+          className="w-full text-xs sm:text-[13px] pl-9 pr-4 h-11 border border-white/10 rounded focus:border-[#CCFF00] focus:ring-1 focus:ring-[#CCFF00]/20 outline-none bg-[#0a0a0a] text-white font-mono uppercase tracking-wider"
         />
-        <Search className="w-4 h-4 text-[#CCFF00] absolute left-3.5 top-3.5" />
+        <Search className="w-4 h-4 text-[#CCFF00] absolute left-3 top-3.5" />
         {searchQuery && (
           <button 
             onClick={() => setSearchQuery('')}
@@ -179,22 +484,37 @@ export default function JobsTab({ isOffline, onSuccessToast, userSkills = [] }: 
                 </div>
 
                 {/* Job Title and overview */}
-                <div>
-                  <h3 className="text-[18px] font-black text-white uppercase tracking-tight display-font leading-snug">
-                    {job.title}
-                  </h3>
-                  
-                  {/* Info meta row */}
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-2 text-xs text-white/60 font-mono uppercase tracking-wider">
-                    <span className="flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5 text-white/30 shrink-0" />
-                      {job.location}
-                    </span>
-                    <span className="flex items-center gap-1 font-bold text-[#CCFF00]">
-                      <Banknote className="w-3.5 h-3.5 text-white/30 shrink-0" />
-                      {job.salary}
-                    </span>
+                <div className="flex gap-4 items-start flex-row justify-between">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-[17px] sm:text-[18px] font-black text-white uppercase tracking-tight display-font leading-snug">
+                      {job.title}
+                    </h3>
+                    
+                    {/* Info meta row */}
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-2 text-xs text-white/60 font-mono uppercase tracking-wider">
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5 text-white/30 shrink-0" />
+                        {job.location}
+                      </span>
+                      <span className="flex items-center gap-1 font-bold text-[#CCFF00]">
+                        <Banknote className="w-3.5 h-3.5 text-white/30 shrink-0" />
+                        {job.salary}
+                      </span>
+                    </div>
                   </div>
+
+                  {/* Workplace illustration / brand logo */}
+                  <img 
+                    src={
+                      job.id === 'job-1' ? officeCebu : 
+                      job.id === 'job-2' ? cebuWarehouseJob : 
+                      job.id === 'job-3' ? cebuResortJob : 
+                      cebuRetailJob
+                    }
+                    alt={`${job.title} workplace`}
+                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg object-cover border border-white/10 shrink-0 shadow-sm"
+                    referrerPolicy="no-referrer"
+                  />
                 </div>
 
                 {/* Short excerpt */}

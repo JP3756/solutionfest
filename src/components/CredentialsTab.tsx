@@ -73,16 +73,16 @@ export default function CredentialsTab({ onSuccessToast, user, onUpdateSkills, o
       </div>
 
       {/* Professional Development Sponsorship */}
-      <div id="govt-sponsorship-banner" className="glass text-white rounded-lg border border-white/10 p-4 flex gap-4 items-center">
+      <div id="professional-sponsorship-banner" className="glass text-white rounded-lg border border-white/10 p-4 flex gap-4 items-center">
         <div className="w-12 h-12 rounded bg-[#CCFF00]/10 border border-[#CCFF00]/30 flex items-center justify-center shrink-0">
           <Award className="w-5 h-5 text-[#CCFF00]" />
         </div>
         <div>
           <h4 className="font-bold text-xs uppercase tracking-wider font-mono text-white">
-            Cebu Upskilling Government Sponsorship
+            Cebu Vocational Training & Alignment Guide
           </h4>
           <span className="text-[#CCFF00] text-[11px] font-sans block mt-0.5">
-            Powering local talent with Cebu City gov-supported educational rewards
+            Verified standard alignments preparing you for career-certified training roles
           </span>
         </div>
       </div>
@@ -112,7 +112,7 @@ export default function CredentialsTab({ onSuccessToast, user, onUpdateSkills, o
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="e.g. AWS Cloud, French Speaking"
+                    placeholder=""
                     value={customSkillInput}
                     onChange={(e) => setCustomSkillInput(e.target.value)}
                     onKeyDown={(e) => {

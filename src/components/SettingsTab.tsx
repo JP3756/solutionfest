@@ -14,6 +14,12 @@ import {
   Info 
 } from 'lucide-react';
 import ResumeBuilder from './ResumeBuilder';
+const getInitials = (name: string) => {
+  if (!name) return 'GP';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
 
 interface SettingsTabProps {
   user: { name: string; skills: string[] } | null;
@@ -36,7 +42,10 @@ export default function SettingsTab({
   const [userName, setUserName] = useState<string>(user?.name || '');
   const [userEmail, setUserEmail] = useState<string>(() => {
     const savedEmail = localStorage.getItem('cebu_talent_email');
-    return savedEmail || 'johnpaolo.cabaluna@dbtc-cebu.edu.ph';
+    if (savedEmail === 'johnpaolo.cabaluna@dbtc-cebu.edu.ph') {
+      return 'applicant@sugbotrabaho.ph';
+    }
+    return savedEmail || 'applicant@sugbotrabaho.ph';
   });
 
   // Cebu Region location preference
@@ -125,6 +134,19 @@ export default function SettingsTab({
         <span className="text-[10px] font-bold text-[#CCFF00] tracking-[0.1em] uppercase font-mono block mb-1">
           Personal Profile
         </span>
+
+        {/* Profile Headshot Preview */}
+        <div className="flex items-center gap-4 border-b border-white/5 pb-4 mt-1 font-mono">
+          <div className="w-12 h-12 rounded-lg bg-[#CCFF00]/10 text-[#CCFF00] font-sans border border-[#CCFF00]/20 flex items-center justify-center font-black tracking-tight text-sm shrink-0 shadow-inner">
+            {getInitials(userName || 'Local Candidate')}
+          </div>
+          <div>
+            <h4 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider leading-none">{userName || 'Local Candidate'}</h4>
+            <span className="text-[9px] text-[#CCFF00] font-mono uppercase font-bold mt-1 tracking-wider block leading-none">
+              Upskilling Profile
+            </span>
+          </div>
+        </div>
 
         {/* Name input */}
         <div className="flex flex-col gap-1.5 font-mono">
