@@ -213,7 +213,7 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
               Civic Resume Designer
             </h3>
             <span className="text-[9.5px] font-mono tracking-widest text-[#CCFF00] uppercase mt-1 block">
-              DMDP Vocational Standard Alignment
+              Standard Employment Format Alignment
             </span>
           </div>
         </div>
@@ -522,85 +522,32 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
           </div>
         )}
 
-        {/* Tab 4: Interactive Style & Real-time Resume Preview */}
+        {/* Tab 4: Real-time Resume Preview */}
         {activeTab === 'preview' && (
           <div className="flex flex-col gap-4 animate-fade-in">
-            {/* Template Selector HUD */}
+            {/* Template Standard Header Info */}
             <div className="flex items-center justify-between border-b border-white/10 pb-3 flex-wrap gap-2">
               <span className="text-[10px] font-bold font-mono text-white/65 uppercase tracking-widest">
-                Template Theme UI
+                Professional Format Preview
               </span>
-              <div className="flex gap-1.5 font-mono text-[9px] font-bold">
-                <button
-                  onClick={() => setResumeData(prev => ({ ...prev, template: 'civic' }))}
-                  className={`px-2.5 py-1 rounded transition-colors uppercase border cursor-pointer ${
-                    resumeData.template === 'civic' 
-                      ? 'bg-blue-600/20 text-blue-400 border-blue-500/40' 
-                      : 'bg-white/5 hover:bg-white/10 text-white/50 border-white/10'
-                  }`}
-                >
-                  Gov Blueprint
-                </button>
-                <button
-                  onClick={() => setResumeData(prev => ({ ...prev, template: 'modern' }))}
-                  className={`px-2.5 py-1 rounded transition-colors uppercase border cursor-pointer ${
-                    resumeData.template === 'modern' 
-                      ? 'bg-[#CCFF00]/15 text-[#CCFF00] border-[#CCFF00]/30' 
-                      : 'bg-white/5 hover:bg-white/10 text-white/50 border-white/10'
-                  }`}
-                >
-                  Tech Neon
-                </button>
-                <button
-                  onClick={() => setResumeData(prev => ({ ...prev, template: 'minimalist' }))}
-                  className={`px-2.5 py-1 rounded transition-colors uppercase border cursor-pointer ${
-                    resumeData.template === 'minimalist' 
-                      ? 'bg-purple-500/20 text-purple-300 border-purple-500/40' 
-                      : 'bg-white/5 hover:bg-white/10 text-white/50 border-white/10'
-                  }`}
-                >
-                  Classy Minimal
-                </button>
-              </div>
+              <span className="text-[9px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                STANDARD COMPLIANT
+              </span>
             </div>
 
             {/* Real Resume Paper Layout Sheet */}
-            <div className={`rounded-xl p-4 sm:p-5 text-slate-900 shadow-xl overflow-hidden relative flex flex-col gap-4 border border-slate-200 transition-all duration-300 ${
-              resumeData.template === 'civic' 
-                ? 'bg-[#f4f7f6] border-t-4 border-t-blue-800' 
-                : resumeData.template === 'modern'
-                ? 'bg-gradient-to-br from-slate-100 to-white' 
-                : 'bg-stone-50 border border-stone-300'
-            }`}>
+            <div className="rounded-xl p-4 sm:p-5 text-slate-900 shadow-xl overflow-hidden relative flex flex-col gap-4 border border-slate-300 bg-white border-t-4 border-t-zinc-800 transition-all duration-300">
               
-              {/* Civic background watermark */}
-              {resumeData.template === 'civic' && (
-                <div className="absolute -right-8 -bottom-8 w-36 h-36 rounded-full border border-blue-800/5 rotate-12 flex items-center justify-center pointer-events-none select-none">
-                  <div className="w-32 h-32 rounded-full border-4 border-dashed border-blue-800/10 flex items-center justify-center font-bold font-mono text-[9px] text-blue-800/10 text-center leading-none tracking-widest uppercase">
-                    DMDP MODEL<br/>CURRICULUM<br/>ALIGNED
-                  </div>
-                </div>
-              )}
-
               {/* Header section on paper representation */}
               <div className="text-center pb-2.5 border-b border-slate-800/10">
-                {resumeData.template === 'civic' && (
-                  <>
-                    <span className="text-[7px] font-bold tracking-[0.2em] font-mono text-slate-500 block uppercase leading-none">
-                      Independent Civic Template Guide
-                    </span>
-                    <span className="text-[7px] font-bold tracking-[0.1em] font-mono text-slate-400 block uppercase leading-none mt-0.5">
-                      Styled for Cebu DMDP Vocational Recommendations
-                    </span>
-                  </>
-                )}
-                {resumeData.template === 'modern' && (
-                  <span className="text-[8px] font-bold text-[#CCFF00] uppercase tracking-widest bg-slate-900 px-2 py-0.5 rounded font-mono inline-block mb-1 shadow">
-                    Upskilling Workforce Registry
-                  </span>
-                )}
-                <h4 className="text-[12px] font-black uppercase text-slate-800 tracking-wider font-sans mt-0.5">
-                  OFFICIAL CIVIC CAREER PROFILE
+                <span className="text-[7px] font-bold tracking-[0.2em] font-mono text-slate-500 block uppercase leading-none">
+                  Professional Resume Standard
+                </span>
+                <span className="text-[7px] font-bold tracking-[0.1em] font-mono text-slate-400 block uppercase leading-none mt-0.5">
+                  Formatted for Cebu Enterprise Hiring Standards
+                </span>
+                <h4 className="text-[12px] font-black uppercase text-slate-800 tracking-wider font-sans mt-1.5">
+                  PROFESSIONAL CAREER PROFILE
                 </h4>
               </div>
 
@@ -615,13 +562,13 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-y-1 gap-x-2 text-[9px] text-slate-600 font-mono mt-0.5">
                     <span className="truncate flex items-center gap-1">
-                      <span className="text-blue-500 font-sans block shrink-0">☎</span> {resumeData.phone}
+                      <span className="text-blue-600 font-sans block shrink-0">☎</span> {resumeData.phone}
                     </span>
                     <span className="truncate flex items-center gap-1">
-                      <span className="text-blue-500 font-sans block shrink-0">✉</span> {resumeData.email}
+                      <span className="text-blue-600 font-sans block shrink-0">✉</span> {resumeData.email}
                     </span>
                     <span className="truncate flex items-center gap-1">
-                      <span className="text-blue-500 font-sans block shrink-0">📍</span> {resumeData.location}
+                      <span className="text-blue-600 font-sans block shrink-0">📍</span> {resumeData.location}
                     </span>
                   </div>
                 </div>
@@ -630,9 +577,7 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
               {/* Career Objective Text block */}
               {resumeData.summary && (
                 <div className="flex flex-col gap-1 border-t border-slate-100 pt-2.5">
-                  <span className={`text-[8.5px] font-bold tracking-widest font-mono uppercase ${
-                    resumeData.template === 'civic' ? 'text-blue-700' : 'text-slate-800 border-b border-slate-200 pb-0.5 mb-1'
-                  }`}>
+                  <span className="text-[8.5px] font-bold tracking-widest font-mono uppercase text-slate-800 border-b border-slate-200 pb-0.5 mb-1">
                     Professional Summary
                   </span>
                   <p className="text-[10px] text-slate-700 font-sans leading-relaxed">
@@ -644,9 +589,7 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
               {/* Work Milestones list */}
               {resumeData.experiences.length > 0 && (
                 <div className="flex flex-col gap-2.5 border-t border-slate-100 pt-2.5">
-                  <span className={`text-[8.5px] font-bold tracking-widest font-mono uppercase block ${
-                    resumeData.template === 'civic' ? 'text-blue-700' : 'text-slate-800 border-b border-slate-200 pb-0.5 mb-1'
-                  }`}>
+                  <span className="text-[8.5px] font-bold tracking-widest font-mono uppercase block text-slate-800 border-b border-slate-200 pb-0.5 mb-1">
                     Industry Experience
                   </span>
                   <div className="flex flex-col gap-2">
@@ -670,9 +613,7 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
               {/* Education section info list */}
               {resumeData.educationList.length > 0 && (
                 <div className="flex flex-col gap-2 border-t border-slate-100 pt-2.5">
-                  <span className={`text-[8.5px] font-bold tracking-widest font-mono uppercase block ${
-                    resumeData.template === 'civic' ? 'text-blue-700' : 'text-slate-800 border-b border-slate-200 pb-0.5 mb-1'
-                  }`}>
+                  <span className="text-[8.5px] font-bold tracking-widest font-mono uppercase block text-slate-800 border-b border-slate-200 pb-0.5 mb-1">
                     Education Track
                   </span>
                   <div className="flex flex-col gap-1.5">
@@ -691,10 +632,8 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
 
               {/* Dynamic Course Certified Skills bad_list */}
               <div className="flex flex-col gap-2.5 border-t border-slate-100 pt-2.5">
-                <span className={`text-[8.5px] font-bold tracking-widest font-mono uppercase block ${
-                  resumeData.template === 'civic' ? 'text-blue-700' : 'text-slate-800 border-b border-slate-200 pb-0.5 mb-1'
-                }`}>
-                  Completed Skills Portfolio (DMDP Style)
+                <span className="text-[8.5px] font-bold tracking-widest font-mono uppercase block text-slate-800 border-b border-slate-200 pb-0.5 mb-1">
+                  Completed Skills & Certifications
                 </span>
                 <div className="flex flex-wrap gap-1 pr-6">
                   {user && user.skills.length > 0 ? (
@@ -714,26 +653,20 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
                 </div>
               </div>
 
-              {/* Certification Stamp sign and simulated register bar-codes */}
-              <div className="flex justify-between items-end border-t border-slate-800/10 pt-2.5 mt-2">
+              {/* Professional References & Applicant Signature lines */}
+              <div className="flex justify-between items-end border-t border-slate-800/10 pt-3 mt-2">
                 <div className="flex flex-col gap-0.5">
-                  <div className="flex items-center gap-0.5 pointer-events-none opacity-45">
-                    <div className="w-[1.5px] h-4 bg-slate-800"></div>
-                    <div className="w-[1px] h-4 bg-slate-800"></div>
-                    <div className="w-[2px] h-4 bg-slate-800"></div>
-                    <div className="w-[1px] h-4 bg-slate-800"></div>
-                    <div className="w-[1.5px] h-4 bg-slate-800"></div>
-                  </div>
-                  <span className="text-[6px] font-mono text-slate-400 font-bold uppercase tracking-widest leading-none">
-                    REF-ALIGN-{user?.name.slice(0,4).toUpperCase() || 'CIV'}
+                  <span className="text-[7px] font-bold text-slate-500 uppercase tracking-widest leading-none font-mono">
+                    REFERENCES
+                  </span>
+                  <span className="text-[8.5px] text-slate-600 font-sans block mt-1 font-medium">
+                    Available upon request
                   </span>
                 </div>
-                <div className="text-right">
-                  <span className="text-[7px] font-bold text-slate-400 block uppercase leading-none font-mono">
-                    Independent CV Format
-                  </span>
-                  <span className="text-[6.5px] font-bold text-slate-500 block uppercase mt-0.5 font-mono">
-                    Skills-Aligned Output
+                <div className="text-right flex flex-col items-end">
+                  <div className="w-24 border-b border-slate-300 mb-1.5 pt-4"></div>
+                  <span className="text-[7px] font-bold text-slate-500 uppercase tracking-widest leading-none font-mono">
+                    APPLICANT SIGNATURE
                   </span>
                 </div>
               </div>
@@ -763,7 +696,7 @@ export default function ResumeBuilder({ user, onSuccessToast }: ResumeBuilderPro
               <div className="bg-white/5 border border-white/5 rounded-lg p-2.5 text-[10px] font-sans text-white/70 leading-normal flex items-start gap-2">
                 <span className="text-[#CCFF00] shrink-0 font-bold mt-0.5">💡</span>
                 <p>
-                  <strong className="text-white">Next Step:</strong> Print this exported PDF and submit it directly to the local <strong className="text-[#CCFF00]">DMDP Office (Ramos, Cebu City)</strong> or present it during regional hiring events to instantly showcase your aligned vocational skills!
+                  <strong className="text-white">Next Step:</strong> Save or print this professional PDF copy to share with prospective local managers, regional recruiters, and upskilling programs to fast-track your applications!
                 </p>
               </div>
             </div>

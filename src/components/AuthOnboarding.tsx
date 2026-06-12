@@ -102,7 +102,7 @@ export default function AuthOnboarding({ onComplete, initialSkills = [] }: AuthO
             </span>
           </div>
           <p className="text-[10px] text-white/60 font-sans tracking-wide mt-0.5 max-w-[280px] leading-normal">
-            Tabangan ka namo nga makasulod og nindot nga trabaho sa Sugbo pinaagi sa pag-konektar nimo diritso sa mga lokal nga kompanya.
+            Pagsumpay sa kalainan sa imong kasamtangang abilidad ug sa imong gipangandoy nga trabaho, aron matabangan ang mga Sugboanon nga mas dali nga mamahimong andam sa panrabaho.
           </p>
           <div className="w-full h-36 rounded-lg overflow-hidden border border-white/10 mt-1.5 relative">
             <img 
