@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { 
   Plus, 
   MapPin, 
@@ -85,7 +85,7 @@ export default function EmployerJobsTab({ user, onSuccessToast }: EmployerJobsTa
     return () => window.removeEventListener('storage', loadData);
   }, []);
 
-  const handlePostSubmit = (e: React.FormEvent) => {
+  const handlePostSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!title || !location || !salary || !description) {
       onSuccessToast('Please fill out all listed fields.');
