@@ -4,15 +4,25 @@ import officeCebu from '../assets/images/office_cebu_1781174008747.png';
 import cebuanoCareerStudents from '../assets/images/cebuano_career_students_1781174551625.png';
 
 interface AuthOnboardingProps {
-  onComplete: (username: string, skills: string[]) => void;
+  onComplete: (
+    username: string, 
+    skills: string[], 
+    role?: 'seeker' | 'employer', 
+    companyName?: string, 
+    industry?: string, 
+    email?: string
+  ) => void;
   initialSkills?: string[];
 }
 
 export default function AuthOnboarding({ onComplete, initialSkills = [] }: AuthOnboardingProps) {
   const [step, setStep] = useState<'login' | 'skills'>('login');
+  const [role, setRole] = useState<'seeker' | 'employer'>('seeker');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [industry, setIndustry] = useState('Tech');
   const [skills, setSkills] = useState<string[]>(
     initialSkills.length > 0 
       ? initialSkills 
@@ -39,6 +49,16 @@ export default function AuthOnboarding({ onComplete, initialSkills = [] }: AuthO
 
   const handleLoginSubmit = (e: FormEvent) => {
     e.preventDefault();
+    if (role === 'employer') {
+      if (!name || !companyName || !email || !password) {
+        setErrorMsg('All corporate credentials are required.');
+        return;
+      }
+      setErrorMsg('');
+      onComplete(name, [], 'employer', companyName, industry, email);
+      return;
+    }
+
     if (!email || !password || !name) {
       setErrorMsg('All protocol inputs are required.');
       return;
@@ -76,7 +96,7 @@ export default function AuthOnboarding({ onComplete, initialSkills = [] }: AuthO
       setErrorMsg('Please register at least one skill to align your matches.');
       return;
     }
-    onComplete(name, skills);
+    onComplete(name, skills, 'seeker', undefined, undefined, email);
   };
 
   return (
@@ -120,6 +140,38 @@ export default function AuthOnboarding({ onComplete, initialSkills = [] }: AuthO
           </div>
         </div>
 
+        {/* Tactile Role Selector Grid */}
+        <div id="role-auth-toggle-bar" className="grid grid-cols-2 gap-1 px-1.5 py-1.5 bg-white/5 border border-white/10 rounded-lg text-[9px] font-mono font-bold uppercase select-none mb-1">
+          <button
+            type="button"
+            onClick={() => {
+              setRole('seeker');
+              setErrorMsg('');
+            }}
+            className={`py-2 px-3 rounded text-center transition-all cursor-pointer leading-none ${
+              role === 'seeker'
+                ? 'bg-[#CCFF00] text-black font-black'
+                : 'text-white/50 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            Job Seeker
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setRole('employer');
+              setErrorMsg('');
+            }}
+            className={`py-2 px-3 rounded text-center transition-all cursor-pointer leading-none ${
+              role === 'employer'
+                ? 'bg-[#CCFF00] text-black font-black'
+                : 'text-white/50 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            Cebu Employer
+          </button>
+        </div>
+
         {step === 'login' ? (
           <form 
             onSubmit={handleLoginSubmit} 
@@ -130,7 +182,7 @@ export default function AuthOnboarding({ onComplete, initialSkills = [] }: AuthO
             <div className="absolute top-0 right-0 w-32 h-[1px] bg-gradient-to-l from-[#CCFF00]/30 to-transparent"></div>
             
             <span className="text-[9px] font-bold text-[#CCFF00] tracking-[0.2em] uppercase font-mono block">
-              Create Your Profile
+              {role === 'employer' ? 'Employer Registry' : 'Create Your Profile'}
             </span>
 
             {errorMsg && (
@@ -142,7 +194,7 @@ export default function AuthOnboarding({ onComplete, initialSkills = [] }: AuthO
             {/* Name Input */}
             <div className="flex flex-col gap-1">
               <label className="text-[9px] font-bold uppercase tracking-widest text-[#CCFF00]/70 font-mono">
-                Full Name
+                {role === 'employer' ? 'Full Name (Contact Person)' : 'Full Name'}
               </label>
               <div className="relative">
                 <input
@@ -157,10 +209,47 @@ export default function AuthOnboarding({ onComplete, initialSkills = [] }: AuthO
               </div>
             </div>
 
+            {/* Employer Specific inputs: Company Name and Industry */}
+            {role === 'employer' && (
+              <>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[9px] font-bold uppercase tracking-widest text-[#CCFF00]/70 font-mono">
+                    Company / Organization
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="e.g. Mactan Tech Resort"
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      className="w-full text-white bg-white/[0.03] hover:bg-white/[0.06] font-medium text-xs font-mono h-9.5 pl-3 pr-3 border-b border-white/15 focus:border-[#CCFF00] focus:bg-white/[0.08] outline-none transition-all"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-[9px] font-bold uppercase tracking-widest text-[#CCFF00]/70 font-mono">
+                    Industry / Sector
+                  </label>
+                  <select
+                    value={industry}
+                    onChange={(e) => setIndustry(e.target.value)}
+                    className="w-full text-white bg-black/85 font-medium text-xs font-mono h-9.5 px-3 border-b border-white/15 focus:border-[#CCFF00] outline-none cursor-pointer"
+                  >
+                    <option value="Tech">Tech / BPO</option>
+                    <option value="Logistics">Logistics & Shipping</option>
+                    <option value="Hospitality">Hospitality & Tourism</option>
+                    <option value="Retail">Retail & General Sales</option>
+                  </select>
+                </div>
+              </>
+            )}
+
             {/* Email Input */}
             <div className="flex flex-col gap-1">
               <label className="text-[9px] font-bold uppercase tracking-widest text-[#CCFF00]/70 font-mono">
-                Email Address
+                {role === 'employer' ? 'Corporate Email Address' : 'Email Address'}
               </label>
               <div className="relative">
                 <input
@@ -198,7 +287,7 @@ export default function AuthOnboarding({ onComplete, initialSkills = [] }: AuthO
               type="submit"
               className="w-full h-10.5 bg-[#CCFF00] hover:bg-[#b0db00] text-black font-bold uppercase text-[10.5px] tracking-widest rounded flex items-center justify-center gap-1.5 mt-1 transition-all cursor-pointer active:scale-98"
             >
-              <span>Get Started</span>
+              <span>{role === 'employer' ? 'Join as Recruiter' : 'Get Started'}</span>
               <ArrowRight className="w-3.5 h-3.5 stroke-[2]" />
             </button>
 

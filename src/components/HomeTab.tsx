@@ -542,10 +542,10 @@ export default function HomeTab({ setCurrentTab, isOffline, onSuccessToast, user
         <div className="flex gap-3 items-start">
           <Sparkles className="w-5 h-5 text-[#CCFF00] shrink-0 mt-0.5" />
           <div className="min-w-0 flex-1">
-            <h4 className="font-bold text-xs uppercase tracking-widest text-[#CCFF00] font-mono">Independent Cebu Career Portal</h4>
+            <h4 className="font-bold text-xs uppercase tracking-widest text-[#CCFF00] font-mono">Cebu Career Portal</h4>
             <div className="text-[13px] text-white/80 leading-relaxed mt-1 font-light flex flex-col gap-2">
               <p>
-                This application is an **independent, community-first career companion** designed to empower and prepare jobseekers in Cebu. All features are built to guide you in structuring your skills, credentials, and resumes to align directly with modern local industry requirements.
+                This application is a **community-first career companion** designed to empower and prepare jobseekers in Cebu. All features are built to guide you in structuring your skills, credentials, and resumes to align directly with modern local industry requirements.
               </p>
               <div className="bg-white/5 border border-white/10 rounded-md p-2.5 mt-1">
                 <span className="font-bold text-[#CCFF00] uppercase text-[10px] block mb-1 font-mono">// HOW TO APPLY FOR CEBU JOBS:</span>
