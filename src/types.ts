@@ -49,3 +49,25 @@ export interface ResumeData {
   educationList: EducationEntry[];
   template: 'civic' | 'modern' | 'minimalist';
 }
+
+export interface User {
+  name: string;
+  skills: string[];
+  role?: 'seeker' | 'employer';
+  companyName?: string;
+  industry?: 'Tech' | 'Logistics' | 'Hospitality' | 'Retail' | string;
+  email?: string;
+  contactNo?: string;
+}
+
+export interface JobApplication {
+  id: string;
+  jobId: string;
+  jobTitle: string;
+  candidateName: string;
+  candidateEmail: string;
+  candidateSkills: string[];
+  appliedAt: string;
+  status: 'Pending' | 'Shortlisted' | 'Contacted' | 'Rejected';
+}
+

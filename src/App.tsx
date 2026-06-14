@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Home, BookOpen, Clock, BadgeCheck, Briefcase, GraduationCap, Sparkles, X, CheckCircle, LogOut, Wifi, WifiOff, Settings } from 'lucide-react';
+import { Home, BookOpen, Clock, BadgeCheck, Briefcase, GraduationCap, Sparkles, X, CheckCircle, LogOut, Wifi, WifiOff, Settings, Users } from 'lucide-react';
 import Header from './components/Header';
 import HomeTab from './components/HomeTab';
 import LearnTab from './components/LearnTab';
@@ -7,6 +7,12 @@ import CredentialsTab from './components/CredentialsTab';
 import JobsTab from './components/JobsTab';
 import SettingsTab from './components/SettingsTab';
 import AuthOnboarding from './components/AuthOnboarding';
+
+// Employer Specific Portal Components
+import EmployerHomeTab from './components/EmployerHomeTab';
+import EmployerTalentTab from './components/EmployerTalentTab';
+import EmployerJobsTab from './components/EmployerJobsTab';
+import { User } from './types';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState<string>('home');
@@ -31,10 +37,21 @@ export default function App() {
   }, []);
 
   // Authenticated user store persisted in localStorage
-  const [user, setUser] = useState<{ name: string; skills: string[] } | null>(() => {
+  const [user, setUser] = useState<User | null>(() => {
     const saved = localStorage.getItem('cebu_talent_user');
     return saved ? JSON.parse(saved) : null;
   });
+
+  // Keep current tabs aligned according to user role when app boots
+  useEffect(() => {
+    if (user) {
+      if (user.role === 'employer') {
+        setCurrentTab((prev) => (prev.startsWith('employer-') || prev === 'settings') ? prev : 'employer-home');
+      } else {
+        setCurrentTab((prev) => (!prev.startsWith('employer-')) ? prev : 'home');
+      }
+    }
+  }, [user]);
 
   // Trigger success Toast notifications
   const triggerToast = (msg: string) => {
@@ -44,11 +61,30 @@ export default function App() {
     }, 4000);
   };
 
-  const handleAuthComplete = (name: string, skills: string[]) => {
-    const newUser = { name, skills };
+  const handleAuthComplete = (
+    name: string, 
+    skills: string[], 
+    role?: 'seeker' | 'employer', 
+    companyName?: string, 
+    industry?: string, 
+    email?: string
+  ) => {
+    const newUser: User = { 
+      name, 
+      skills, 
+      role: role || 'seeker', 
+      companyName, 
+      industry, 
+      email 
+    };
     setUser(newUser);
     localStorage.setItem('cebu_talent_user', JSON.stringify(newUser));
-    triggerToast(`Sync Successful: Account verified. Welcome, ${name}!`);
+    if (newUser.role === 'employer') {
+      setCurrentTab('employer-home');
+      triggerToast(`Welcome back, Recruiter ${name}! Entered ${companyName} Portal.`);
+    } else {
+      triggerToast(`Sync Successful: Account verified. Welcome, ${name}!`);
+    }
   };
 
   const handleUpdateSkills = (updatedSkills: string[]) => {
@@ -75,6 +111,15 @@ export default function App() {
 
   const renderActiveTab = () => {
     switch (currentTab) {
+      // Employer Portal Tabs
+      case 'employer-home':
+        return <EmployerHomeTab user={user} setCurrentTab={setCurrentTab} onSuccessToast={triggerToast} />;
+      case 'employer-talent':
+        return <EmployerTalentTab onSuccessToast={triggerToast} />;
+      case 'employer-post-job':
+        return <EmployerJobsTab user={user} onSuccessToast={triggerToast} />;
+
+      // Job Seeker Tabs
       case 'learn':
         return <LearnTab isOffline={isOffline} onSuccessToast={triggerToast} />;
       case 'credentials':
@@ -100,6 +145,10 @@ export default function App() {
           />
         );
       default:
+        // Automatically default employer users to employer-home if somehow navigated to "default"
+        if (user?.role === 'employer') {
+          return <EmployerHomeTab user={user} setCurrentTab={setCurrentTab} onSuccessToast={triggerToast} />;
+        }
         return (
           <HomeTab 
             setCurrentTab={setCurrentTab} 
@@ -174,6 +223,7 @@ export default function App() {
               isOffline={isOffline} 
               setIsOffline={setIsOffline}
               onSearchClick={handleJobSearchHeaderClick}
+              user={user}
             />
 
             {/* Scrollable Core Screen Contents inside the mobile frame */}
@@ -186,75 +236,137 @@ export default function App() {
               id="tab-navbar-container" 
               className="absolute bottom-0 left-0 right-0 h-[72px] bg-[#0c0c0c]/95 backdrop-blur-md border-t border-white/10 z-30 px-3 flex items-center justify-between pb-3"
             >
-              {/* Home Button */}
-              <button
-                id="nav-tab-home"
-                onClick={() => setCurrentTab('home')}
-                className={`flex flex-col items-center justify-center flex-1 h-[50px] rounded transition-all cursor-pointer ${
-                  currentTab === 'home'
-                    ? 'bg-[#CCFF00] text-black font-black uppercase tracking-tight'
-                    : 'text-white/50 hover:text-white font-semibold'
-                }`}
-              >
-                <Home className="w-4 h-4 mb-0.5" />
-                <span className="text-[9px] tracking-wider uppercase font-mono">Home</span>
-              </button>
+              {user.role === 'employer' ? (
+                <>
+                  {/* Employer Home */}
+                  <button
+                    id="nav-tab-employer-home"
+                    onClick={() => setCurrentTab('employer-home')}
+                    className={`flex flex-col items-center justify-center flex-1 h-[50px] rounded transition-all cursor-pointer ${
+                      currentTab === 'employer-home'
+                        ? 'bg-[#CCFF00] text-black font-black uppercase tracking-tight'
+                        : 'text-white/50 hover:text-white font-semibold'
+                    }`}
+                  >
+                    <Home className="w-4 h-4 mb-0.5" />
+                    <span className="text-[9px] tracking-wider uppercase font-mono">Home</span>
+                  </button>
 
-              {/* Learn Button */}
-              <button
-                id="nav-tab-learn"
-                onClick={() => setCurrentTab('learn')}
-                className={`flex flex-col items-center justify-center flex-1 h-[50px] rounded transition-all cursor-pointer ${
-                  currentTab === 'learn'
-                    ? 'bg-[#CCFF00] text-black font-black uppercase tracking-tight'
-                    : 'text-white/50 hover:text-white font-semibold'
-                }`}
-              >
-                <GraduationCap className="w-4 h-4 mb-0.5" />
-                <span className="text-[9px] tracking-wider uppercase font-mono">Learn</span>
-              </button>
+                  {/* Employer Talent Directory */}
+                  <button
+                    id="nav-tab-employer-talent"
+                    onClick={() => setCurrentTab('employer-talent')}
+                    className={`flex flex-col items-center justify-center flex-1 h-[50px] rounded transition-all cursor-pointer ${
+                      currentTab === 'employer-talent'
+                        ? 'bg-[#CCFF00] text-black font-black uppercase tracking-tight'
+                        : 'text-white/50 hover:text-white font-semibold'
+                    }`}
+                  >
+                    <GraduationCap className="w-4 h-4 mb-0.5" />
+                    <span className="text-[9px] tracking-wider uppercase font-mono">Talents</span>
+                  </button>
 
-              {/* Credentials Button */}
-              <button
-                id="nav-tab-credentials"
-                onClick={() => setCurrentTab('credentials')}
-                className={`flex flex-col items-center justify-center flex-1 h-[50px] rounded transition-all cursor-pointer ${
-                  currentTab === 'credentials'
-                    ? 'bg-[#CCFF00] text-black font-black uppercase tracking-tight'
-                    : 'text-white/50 hover:text-white font-semibold'
-                }`}
-              >
-                <BadgeCheck className="w-4 h-4 mb-0.5" />
-                <span className="text-[9px] tracking-wider uppercase font-mono">Skills</span>
-              </button>
+                  {/* Employer Job Postings */}
+                  <button
+                    id="nav-tab-employer-post-job"
+                    onClick={() => setCurrentTab('employer-post-job')}
+                    className={`flex flex-col items-center justify-center flex-1 h-[50px] rounded transition-all cursor-pointer ${
+                      currentTab === 'employer-post-job'
+                        ? 'bg-[#CCFF00] text-black font-black uppercase tracking-tight'
+                        : 'text-white/50 hover:text-white font-semibold'
+                    }`}
+                  >
+                    <Briefcase className="w-4 h-4 mb-0.5" />
+                    <span className="text-[9px] tracking-wider uppercase font-mono">Jobs</span>
+                  </button>
 
-              {/* Jobs Button */}
-              <button
-                id="nav-tab-jobs"
-                onClick={() => setCurrentTab('jobs')}
-                className={`flex flex-col items-center justify-center flex-1 h-[50px] rounded transition-all cursor-pointer ${
-                  currentTab === 'jobs'
-                    ? 'bg-[#CCFF00] text-black font-black uppercase tracking-tight'
-                    : 'text-white/50 hover:text-white font-semibold'
-                }`}
-              >
-                <Briefcase className="w-4 h-4 mb-0.5" />
-                <span className="text-[9px] tracking-wider uppercase font-mono">Jobs</span>
-              </button>
+                  {/* Settings */}
+                  <button
+                    id="nav-tab-settings"
+                    onClick={() => setCurrentTab('settings')}
+                    className={`flex flex-col items-center justify-center flex-1 h-[50px] rounded transition-all cursor-pointer ${
+                      currentTab === 'settings'
+                        ? 'bg-[#CCFF00] text-black font-black uppercase tracking-tight'
+                        : 'text-white/50 hover:text-white font-semibold'
+                    }`}
+                  >
+                    <Settings className="w-4 h-4 mb-0.5" />
+                    <span className="text-[9px] tracking-wider uppercase font-mono">Settings</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* Home Button */}
+                  <button
+                    id="nav-tab-home"
+                    onClick={() => setCurrentTab('home')}
+                    className={`flex flex-col items-center justify-center flex-1 h-[50px] rounded transition-all cursor-pointer ${
+                      currentTab === 'home'
+                        ? 'bg-[#CCFF00] text-black font-black uppercase tracking-tight'
+                        : 'text-white/50 hover:text-white font-semibold'
+                    }`}
+                  >
+                    <Home className="w-4 h-4 mb-0.5" />
+                    <span className="text-[9px] tracking-wider uppercase font-mono">Home</span>
+                  </button>
 
-              {/* Settings Button */}
-              <button
-                id="nav-tab-settings"
-                onClick={() => setCurrentTab('settings')}
-                className={`flex flex-col items-center justify-center flex-1 h-[50px] rounded transition-all cursor-pointer ${
-                  currentTab === 'settings'
-                    ? 'bg-[#CCFF00] text-black font-black uppercase tracking-tight'
-                    : 'text-white/50 hover:text-white font-semibold'
-                }`}
-              >
-                <Settings className="w-4 h-4 mb-0.5" />
-                <span className="text-[9px] tracking-wider uppercase font-mono">Settings</span>
-              </button>
+                  {/* Learn Button */}
+                  <button
+                    id="nav-tab-learn"
+                    onClick={() => setCurrentTab('learn')}
+                    className={`flex flex-col items-center justify-center flex-1 h-[50px] rounded transition-all cursor-pointer ${
+                      currentTab === 'learn'
+                        ? 'bg-[#CCFF00] text-black font-black uppercase tracking-tight'
+                        : 'text-white/50 hover:text-white font-semibold'
+                    }`}
+                  >
+                    <GraduationCap className="w-4 h-4 mb-0.5" />
+                    <span className="text-[9px] tracking-wider uppercase font-mono">Learn</span>
+                  </button>
+
+                  {/* Credentials Button */}
+                  <button
+                    id="nav-tab-credentials"
+                    onClick={() => setCurrentTab('credentials')}
+                    className={`flex flex-col items-center justify-center flex-1 h-[50px] rounded transition-all cursor-pointer ${
+                      currentTab === 'credentials'
+                        ? 'bg-[#CCFF00] text-black font-black uppercase tracking-tight'
+                        : 'text-white/50 hover:text-white font-semibold'
+                    }`}
+                  >
+                    <BadgeCheck className="w-4 h-4 mb-0.5" />
+                    <span className="text-[9px] tracking-wider uppercase font-mono">Skills</span>
+                  </button>
+
+                  {/* Jobs Button */}
+                  <button
+                    id="nav-tab-jobs"
+                    onClick={() => setCurrentTab('jobs')}
+                    className={`flex flex-col items-center justify-center flex-1 h-[50px] rounded transition-all cursor-pointer ${
+                      currentTab === 'jobs'
+                        ? 'bg-[#CCFF00] text-black font-black uppercase tracking-tight'
+                        : 'text-white/50 hover:text-white font-semibold'
+                    }`}
+                  >
+                    <Briefcase className="w-4 h-4 mb-0.5" />
+                    <span className="text-[9px] tracking-wider uppercase font-mono">Jobs</span>
+                  </button>
+
+                  {/* Settings Button */}
+                  <button
+                    id="nav-tab-settings"
+                    onClick={() => setCurrentTab('settings')}
+                    className={`flex flex-col items-center justify-center flex-1 h-[50px] rounded transition-all cursor-pointer ${
+                      currentTab === 'settings'
+                        ? 'bg-[#CCFF00] text-black font-black uppercase tracking-tight'
+                        : 'text-white/50 hover:text-white font-semibold'
+                    }`}
+                  >
+                    <Settings className="w-4 h-4 mb-0.5" />
+                    <span className="text-[9px] tracking-wider uppercase font-mono">Settings</span>
+                  </button>
+                </>
+              )}
             </nav>
           </>
         ) : (

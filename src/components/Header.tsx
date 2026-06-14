@@ -1,4 +1,5 @@
 import { ArrowLeft, WifiOff, Wifi, Compass, Sparkles, Search, HelpCircle, Settings } from 'lucide-react';
+import { User } from '../types';
 
 interface HeaderProps {
   currentTab: string;
@@ -6,6 +7,7 @@ interface HeaderProps {
   isOffline: boolean;
   setIsOffline: (offline: boolean) => void;
   onSearchClick?: () => void;
+  user?: User | null;
 }
 
 export default function Header({
@@ -14,6 +16,7 @@ export default function Header({
   isOffline,
   setIsOffline,
   onSearchClick,
+  user,
 }: HeaderProps) {
   // Title depends on screen tab or some sub-view
   const getHeaderTitle = () => {
@@ -24,6 +27,12 @@ export default function Header({
         return 'Cebu Upskilling';
       case 'jobs':
         return 'Cebu Upskilling';
+      case 'employer-home':
+        return 'Recruiter Hub';
+      case 'employer-talent':
+        return 'Talent Search';
+      case 'employer-post-job':
+        return 'Recruitment';
       case 'settings':
         return 'Settings';
       default:
@@ -31,10 +40,14 @@ export default function Header({
     }
   };
 
-  const showBackButton = currentTab !== 'home';
+  const showBackButton = currentTab !== 'home' && currentTab !== 'employer-home';
 
   const handleBack = () => {
-    setCurrentTab('home');
+    if (user?.role === 'employer') {
+      setCurrentTab('employer-home');
+    } else {
+      setCurrentTab('home');
+    }
   };
 
   const getRightIcon = () => {
@@ -59,6 +72,7 @@ export default function Header({
           </div>
         );
       case 'credentials':
+      case 'employer-talent':
         return (
           <div className="flex items-center gap-1">
             <span id="verified-cap-stamp" className="p-1 text-[#CCFF00] bg-[#CCFF00]/10 rounded border border-[#CCFF00]/20">
@@ -112,7 +126,7 @@ export default function Header({
               )}
             </div>
             <span className="text-[8px] font-mono tracking-widest text-[#CCFF00] uppercase block mt-0.5 font-bold leading-none">
-              Independent Career Guide
+              Cebu Career Guide
             </span>
           </div>
         </div>
